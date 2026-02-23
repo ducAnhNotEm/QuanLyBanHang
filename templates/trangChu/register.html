@@ -1,0 +1,89 @@
+<!-- templates/trangChu/register.html -->
+{% load static %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Đăng ký - Quản lý bán hàng</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">Sales Management System</div>
+
+      <form id="registerForm" method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        
+        <!-- Hiển thị messages -->
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        
+        <div class="form-group">
+          <label>Họ và tên</label>
+          <input type="text" id="fullname" name="fullname" required />
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="registerEmail" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label>Số điện thoại</label>
+          <input type="text" id="phone" name="phone" required />
+        </div>
+
+        <div class="form-group">
+          <label>Mật khẩu</label>
+          <input type="password" id="registerPassword" name="password" required />
+        </div>
+
+        <div class="form-group">
+          <label>Xác nhận mật khẩu</label>
+          <input type="password" id="confirmPassword" name="confirm_password" required />
+        </div>
+
+        <div class="form-group">
+          <label>Địa chỉ</label>
+          <input type="text" id="address" name="address" />
+        </div>
+
+        <div class="form-group">
+          <label>Ngày sinh</label>
+          <input type="date" id="birthday" name="birthday" />
+        </div>
+
+        <div class="form-group">
+          <label>Giới tính</label>
+          <div class="gender-group">
+            <label class="gender-option">
+              <input type="radio" name="gender" value="Nam" checked />
+              <span>Nam</span>
+            </label>
+            <label class="gender-option">
+              <input type="radio" name="gender" value="Nữ" />
+              <span>Nữ</span>
+            </label>
+            <label class="gender-option">
+              <input type="radio" name="gender" value="Khác" />
+              <span>Khác</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit">Tạo tài khoản</button>
+      </form>
+
+      <div class="links">
+        Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập</a>
+      </div>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>
