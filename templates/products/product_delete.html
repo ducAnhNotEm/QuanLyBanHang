@@ -1,0 +1,32 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xóa sản phẩm</title>
+    <link rel="stylesheet" href="{% static 'css/product_delete.css' %}" />
+  </head>
+  <body>
+    <div class="delete-wrapper">
+      <div class="delete-card">
+        <h1>Xác nhận xóa sản phẩm</h1>
+        <p>Bạn có chắc muốn xóa sản phẩm này không?</p>
+
+        <div class="product-box">
+          <p><strong>Tên sản phẩm:</strong> {{ product.productName }}</p>
+          <p><strong>Giá:</strong> {{ product.formatted_price }}</p>
+          <p><strong>Tồn kho:</strong> {{ product.stockQuantity }}</p>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="delete-actions">
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-danger">Xóa sản phẩm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

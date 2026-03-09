@@ -1,0 +1,133 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ product.productName }} | Chi tiết sản phẩm</title>
+    <meta name="description" content="{{ meta_description }}" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="{{ canonical_url }}" />
+
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:type" content="product" />
+    <meta property="og:title" content="{{ product.productName }} | Chi tiết sản phẩm" />
+    <meta property="og:description" content="{{ meta_description }}" />
+    <meta property="og:url" content="{{ canonical_url }}" />
+    <meta property="og:site_name" content="Sales Management" />
+    {% if product_image_url %}
+    <meta property="og:image" content="{{ product_image_url }}" />
+    {% endif %}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ product.productName }} | Chi tiết sản phẩm" />
+    <meta name="twitter:description" content="{{ meta_description }}" />
+    {% if product_image_url %}
+    <meta name="twitter:image" content="{{ product_image_url }}" />
+    {% endif %}
+
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "{{ product.productName|escapejs }}",
+        "description": "{{ meta_description|escapejs }}",
+        "url": "{{ canonical_url|escapejs }}",
+        "sku": "{{ product.id }}",
+        {% if product_image_url %}
+        "image": "{{ product_image_url|escapejs }}",
+        {% endif %}
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "VND",
+          "price": "{{ product.price }}",
+          "availability": "{% if product.stockQuantity > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header class="detail-header">
+      <div class="container header-wrap">
+        <div class="logo">Sales Management</div>
+
+        <nav class="nav">
+          <a href="{% url 'home' %}">Trang chủ</a>
+          <a href="{% url 'product_list' %}">Sản phẩm</a>
+          <a href="{% url 'logout' %}">Đăng xuất</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container detail-page">
+      <section class="detail-card">
+        <div class="detail-image">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.productName }}" loading="lazy" />
+          {% else %}
+          <div class="no-image">Chưa có ảnh</div>
+          {% endif %}
+        </div>
+
+        <div class="detail-info">
+          <h1>{{ product.productName }}</h1>
+          <p class="detail-price">{{ product.formatted_price }}</p>
+          <p class="detail-stock">Tồn kho: {{ product.stockQuantity }}</p>
+
+          <div class="detail-description">
+            <h2>Mô tả sản phẩm</h2>
+            <p>
+              {% if product.description %}
+                {{ product.description }}
+              {% else %}
+                Không có mô tả
+              {% endif %}
+            </p>
+          </div>
+
+          <div class="detail-actions">
+            <a href="{% url 'home' %}" class="btn btn-secondary"
+              >Quay lại trang chủ</a
+            >
+
+            {% if request.user.is_staff %}
+            <a
+              href="{% url 'product_update' product.id %}"
+              class="btn btn-warning"
+              >Sửa</a
+            >
+            <a
+              href="{% url 'product_delete' product.id %}"
+              class="btn btn-danger"
+              >Xóa</a
+            >
+            {% else %}
+            <a href="#" class="btn btn-primary">Đặt hàng</a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="related-section">
+        <h2>Sản phẩm liên quan</h2>
+
+        <div class="related-grid">
+          {% for item in related_products %}
+          <a href="{{ item.get_absolute_url }}" class="related-card">
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.productName }}" loading="lazy" />
+            {% else %}
+            <div class="small-no-image">No Image</div>
+            {% endif %}
+            <h3>{{ item.productName }}</h3>
+            <p>{{ item.formatted_price }}</p>
+          </a>
+          {% empty %}
+          <p>Chưa có sản phẩm liên quan.</p>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

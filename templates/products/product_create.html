@@ -1,0 +1,117 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thêm sản phẩm | Quản trị sản phẩm</title>
+    <meta
+      name="description"
+      content="Trang thêm sản phẩm dành cho quản trị viên của hệ thống quản lý bán hàng."
+    />
+    <link rel="stylesheet" href="{% static 'css/product_create.css' %}" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div class="container header-wrap">
+        <div class="brand">
+          <span class="brand-main">Sales Management</span>
+          <span class="brand-sub">Admin Panel</span>
+        </div>
+
+        <nav class="admin-nav">
+          <a href="{% url 'home' %}">Trang chủ</a>
+          <a href="{% url 'product_list' %}">Danh sách sản phẩm</a>
+          <a href="/admin/">Django Admin</a>
+          <a href="{% url 'logout' %}">Đăng xuất</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page-wrap">
+      <section class="page-intro">
+        <h1>Thêm sản phẩm mới</h1>
+        <p>
+          Quản trị viên có thể thêm sản phẩm mới vào hệ thống để hiển thị ngay
+          trên trang chủ và cho phép người dùng xem chi tiết sản phẩm.
+        </p>
+      </section>
+
+      <section class="form-card">
+        <div class="form-card-header">
+          <h2>Thông tin sản phẩm</h2>
+          <p>Điền đầy đủ thông tin bên dưới để tạo sản phẩm mới.</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="product-form">
+          {% csrf_token %}
+
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="productName">Tên sản phẩm</label>
+              <input
+                type="text"
+                id="productName"
+                name="productName"
+                placeholder="Ví dụ: Bánh snack vị phô mai"
+                required
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="description">Mô tả sản phẩm</label>
+              <textarea
+                id="description"
+                name="description"
+                rows="5"
+                placeholder="Nhập mô tả chi tiết về sản phẩm..."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="price">Giá bán</label>
+              <input
+                type="number"
+                step="0.01"
+                id="price"
+                name="price"
+                placeholder="Ví dụ: 15000"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="stockQuantity">Số lượng tồn kho</label>
+              <input
+                type="number"
+                id="stockQuantity"
+                name="stockQuantity"
+                placeholder="Ví dụ: 50"
+                required
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="image">Hình ảnh sản phẩm</label>
+              <input type="file" id="image" name="image" accept="image/*" />
+              <small
+                >Chấp nhận các định dạng ảnh phổ biến như JPG, PNG, WEBP.</small
+              >
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="{% url 'product_list' %}" class="btn btn-secondary"
+              >Quay lại</a
+            >
+            <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
