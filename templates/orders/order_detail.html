@@ -1,0 +1,70 @@
+{% load static currency %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết đơn hàng #{{ order.id }}</title>
+    <link rel="stylesheet" href="{% static 'css/order_detail.css' %}" />
+  </head>
+  <body>
+    <header class="order-header">
+      <div class="container header-wrap">
+        <div class="logo">Sales Management</div>
+        <nav class="nav">
+          <a href="{% url 'home' %}">Trang chủ</a>
+          <a href="{% url 'cart' %}">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}">Lịch sử mua</a>
+          <a href="{% url 'logout' %}">Đăng xuất</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container order-page">
+      <section class="order-card">
+        <h1>Đơn hàng #{{ order.id }}</h1>
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <p>Trạng thái: <strong>{{ order.status }}</strong></p>
+        <p>Ngày tạo: {{ order.createdAt|date:"d/m/Y H:i" }}</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for detail in order.details.all %}
+              <tr>
+                <td>{{ detail.product.productName }}</td>
+                <td>{{ detail.unitPrice|vnd }} VNĐ</td>
+                <td>{{ detail.quantity }}</td>
+                <td>{{ detail.subTotal|vnd }} VNĐ</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="total">
+          Tổng thanh toán: <strong>{{ order.totalAmount|vnd }} VNĐ</strong>
+        </p>
+
+        <div class="actions">
+          <a href="{% url 'home' %}" class="btn btn-secondary">Về trang chủ</a>
+          <a href="{% url 'cart' %}" class="btn btn-primary">Tiếp tục mua hàng</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

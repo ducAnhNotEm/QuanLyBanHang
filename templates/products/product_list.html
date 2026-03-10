@@ -18,6 +18,9 @@
 
           {% if request.user.is_staff %}
           <a href="{% url 'product_create' %}">Thêm sản phẩm</a>
+          {% else %}
+          <a href="{% url 'cart' %}">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}">Lịch sử mua</a>
           {% endif %}
 
           <a href="{% url 'logout' %}">Đăng xuất</a>
@@ -27,6 +30,18 @@
 
     <section class="container">
       <h1 class="page-title">Danh sách sản phẩm</h1>
+
+      <form method="get" action="{% url 'product_list' %}" class="product-search-form">
+        <label for="product-list-search" class="sr-only">Tìm sản phẩm</label>
+        <input
+          id="product-list-search"
+          type="text"
+          name="q"
+          placeholder="Tìm theo tên, mô tả..."
+          value="{{ keyword }}"
+        />
+        <button type="submit">Tìm</button>
+      </form>
 
       <div class="product-grid">
         {% for product in products %}

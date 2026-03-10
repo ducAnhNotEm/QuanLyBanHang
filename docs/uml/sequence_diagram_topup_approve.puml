@@ -1,0 +1,58 @@
+@startuml
+title Sales Management - Sequence Diagram (Create & Approve TopUpRequest)
+
+actor Customer
+actor Admin
+participant "TopUpRequestCreateView" as CreateView
+participant "TopUpRequestListView" as ListView
+participant "TopUpRequestApproveView" as ApproveView
+database "Customer" as CustomerModel
+database "TopUpRequest" as TopUpModel
+database "Wallet" as WalletModel
+
+== Customer creates request ==
+Customer -> CreateView: GET /wallet/topup/create/
+alt Not authenticated
+  CreateView --> Customer: Redirect /login/
+else Staff user
+  CreateView --> Customer: Redirect / (home)
+else Valid customer user
+  CreateView --> Customer: Render form
+end
+
+Customer -> CreateView: POST amount, note
+CreateView -> CreateView: Validate amount format and value > 0
+alt Invalid amount
+  CreateView --> Customer: Render form + error message
+else Valid amount
+  CreateView -> CustomerModel: get request.user.customer_profile
+  alt Customer not found
+    CreateView --> Customer: Redirect / + error message
+  else Found
+    CreateView -> TopUpModel: create(status=PENDING, amount, note)
+    TopUpModel --> CreateView: TopUpRequest created
+    CreateView --> Customer: Redirect /wallet/ + success message
+  end
+end
+
+== Admin approves request ==
+Admin -> ListView: GET /wallet/topup/requests/
+ListView -> TopUpModel: all().order_by('-id')
+TopUpModel --> ListView: request list
+ListView --> Admin: Render list
+
+Admin -> ApproveView: POST /wallet/topup/requests/{id}/approve/
+ApproveView -> TopUpModel: get_object_or_404(id)
+TopUpModel --> ApproveView: topup_request
+
+alt topup_request.status != PENDING
+  ApproveView --> Admin: Redirect list + error message
+else status == PENDING
+  ApproveView -> WalletModel: get wallet by topup_request.customer
+  WalletModel --> ApproveView: wallet
+  ApproveView -> WalletModel: balance += amount; save()
+  ApproveView -> TopUpModel: status=APPROVED; save()
+  ApproveView --> Admin: Redirect list + success message
+end
+
+@enduml

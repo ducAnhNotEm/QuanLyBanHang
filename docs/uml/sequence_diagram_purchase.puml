@@ -1,0 +1,57 @@
+@startuml
+title Sales Management - Sequence Diagram (Cart Checkout)
+
+actor Customer
+participant "ProductDetailView\n(template)" as ProductDetail
+participant "AddToCartView" as AddCart
+participant "CartView" as CartView
+participant "CartCheckoutView" as Checkout
+database "Cart / CartItem" as CartDB
+database "Product" as ProductDB
+database "Wallet" as WalletDB
+database "Order / OrderDetail" as OrderDB
+
+Customer -> ProductDetail: Mo trang chi tiet san pham
+ProductDetail --> Customer: Hien thi "Them vao gio" + "Mua ngay"
+
+Customer -> AddCart: POST /cart/add/{product_id} (quantity)
+AddCart -> ProductDB: Kiem tra ton kho
+alt So luong khong hop le
+  AddCart --> Customer: Redirect + error message
+else Hop le
+  AddCart -> CartDB: get_or_create(cart)\nget_or_create(cart_item)
+  AddCart -> CartDB: Cap nhat quantity, isSelected=True
+  AddCart --> Customer: Redirect + success message
+end
+
+Customer -> CartView: GET /cart/
+CartView -> CartDB: Lay danh sach item
+CartView --> Customer: Hien thi item + tong tien item da chon
+
+Customer -> Checkout: POST /cart/checkout/
+Checkout -> CartDB: Lay item isSelected=True
+alt Khong co item nao duoc chon
+  Checkout --> Customer: Redirect /cart + error message
+else Co item duoc chon
+  Checkout -> ProductDB: select_for_update() + kiem tra ton kho
+  alt Thieu ton kho
+    Checkout --> Customer: Redirect /cart + error message
+  else Du ton kho
+    Checkout -> WalletDB: select_for_update() + kiem tra so du
+    alt So du khong du
+      Checkout --> Customer: Redirect /cart + error message
+    else So du du
+    Checkout -> OrderDB: Tao Order
+    loop Tung item da chon
+      Checkout -> OrderDB: Tao OrderDetail
+      Checkout -> ProductDB: Tru stockQuantity
+    end
+    Checkout -> OrderDB: Cap nhat totalAmount
+    Checkout -> WalletDB: Tru so du vi
+    Checkout -> CartDB: Xoa item da thanh toan
+    Checkout --> Customer: Redirect /orders/{id}/ + success message
+    end
+  end
+end
+
+@enduml

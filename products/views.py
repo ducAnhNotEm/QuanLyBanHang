@@ -138,8 +138,12 @@ class ProductListView(LoginRequiredMixin, View):
 
     def get(self, request):
         ensure_product_slugs()
-        products = Product.objects.all().order_by('-id')
-        return render(request, self.template_name, {'products': products})
+        keyword = request.GET.get('q', '').strip()
+        products = search_products(Product.objects.all(), keyword)
+        return render(request, self.template_name, {
+            'products': products,
+            'keyword': keyword,
+        })
 
 
 class ProductCreateView(LoginRequiredMixin, UserPassesTestMixin, View):

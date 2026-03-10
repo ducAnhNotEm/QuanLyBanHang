@@ -1,0 +1,72 @@
+{% load static currency %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lịch sử mua hàng</title>
+    <link rel="stylesheet" href="{% static 'css/order_history.css' %}" />
+  </head>
+  <body>
+    <header class="history-header">
+      <div class="container header-wrap">
+        <div class="logo">Sales Management</div>
+        <nav class="nav">
+          <a href="{% url 'home' %}">Trang chủ</a>
+          <a href="{% url 'cart' %}">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}">Lịch sử mua</a>
+          <a href="{% url 'logout' %}">Đăng xuất</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container history-page">
+      <section class="history-card">
+        <h1>Lịch sử mua hàng</h1>
+
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Thời gian</th>
+                <th>Số sản phẩm</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Chi tiết</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.createdAt|date:"d/m/Y H:i" }}</td>
+                <td>{{ order.details.count }}</td>
+                <td>{{ order.totalAmount|vnd }} VNĐ</td>
+                <td>{{ order.status }}</td>
+                <td>
+                  <a href="{% url 'order_detail' order.id %}" class="btn btn-detail">
+                    Xem đơn
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6">Bạn chưa có đơn hàng nào.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+@startuml
+title Sales Management - Activity Diagram (Add Cart, Buy Now, Checkout Cart)
+
+start
+:Nguoi dung mo chi tiet san pham;
+
+if (Da dang nhap?) then (No)
+  :Nhan "Mua ngay";
+  :Redirect Login;
+  stop
+endif
+
+if (La staff/admin?) then (Yes)
+  :Khong duoc mua hang;
+  stop
+endif
+
+if (Con ton kho?) then (No)
+  :Thong bao het hang;
+  stop
+endif
+
+if (Chon "Them vao gio"?) then (Yes)
+  :Nhap so luong;
+  if (So luong hop le va <= ton kho?) then (No)
+    :Bao loi;
+    stop
+  endif
+  :Tao/cap nhat CartItem;
+  :Redirect trang truoc hoac Gio hang;
+else (Mua ngay)
+  :Nhap so luong;
+  if (So luong hop le va <= ton kho?) then (No)
+    :Bao loi;
+    stop
+  endif
+  :Tinh tong tien;
+  if (So du vi >= tong tien?) then (No)
+    :Bao loi "So du vi khong du";
+    stop
+  endif
+  :Tao Order + OrderDetail;
+  :Tru ton kho san pham;
+  :Tru tien trong vi;
+  :Hien thi chi tiet don hang;
+  stop
+endif
+
+:Vao gio hang;
+:Chon/Bỏ chon san pham trong gio;
+:Cap nhat so luong neu can;
+
+if (Co it nhat 1 san pham duoc chon?) then (No)
+  :Bao loi;
+  stop
+endif
+
+if (Tat ca du ton kho?) then (No)
+  :Bao loi ton kho;
+  stop
+endif
+
+:Tinh tong tien item da chon;
+if (So du vi >= tong tien?) then (No)
+  :Bao loi "So du vi khong du";
+  stop
+endif
+
+:Tao Order + OrderDetail tu cac item duoc chon;
+:Tru ton kho tung san pham;
+:Tru tien trong vi;
+:Xoa item da thanh toan khoi gio;
+:Hien thi chi tiet don hang;
+stop
+@enduml

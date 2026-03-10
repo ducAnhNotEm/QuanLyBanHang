@@ -1,0 +1,95 @@
+@startuml
+title Sales Management - Class Diagram (Synced)
+
+skinparam classAttributeIconSize 0
+
+class User <<Django Auth>> {
+  +id: int
+  +username: string
+  +email: string
+  +password: string
+  +is_staff: bool
+}
+
+class Role {
+  +id: int
+  +roleName: string
+}
+
+class Customer {
+  +id: int
+  +fullName: string
+  +phoneNumber: string
+  +address: string
+  +dateOfBirth: date
+  +gender: string
+  +viewBalance(): int
+  +createTopUpRequest(amount, note): TopUpRequest
+}
+
+class Wallet {
+  +id: int
+  +balance: bigint
+}
+
+class TopUpRequest {
+  +id: int
+  +amount: bigint
+  +note: text
+  +status: PENDING|APPROVED|REJECTED
+}
+
+class Product {
+  +id: int
+  +productName: string
+  +slug: string
+  +description: text
+  +price: decimal
+  +stockQuantity: int
+  +image: ImageField
+  +get_absolute_url(): string
+  +formatted_price: string
+}
+
+class Cart {
+  +id: int
+  +updatedAt: datetime
+}
+
+class CartItem {
+  +id: int
+  +quantity: int
+  +isSelected: bool
+  +subTotal: decimal
+}
+
+class Order {
+  +id: int
+  +totalAmount: decimal
+  +status: PAID|CANCELLED
+  +createdAt: datetime
+}
+
+class OrderDetail {
+  +id: int
+  +quantity: int
+  +unitPrice: decimal
+  +subTotal: decimal
+}
+
+User "1" -- "1" Customer : customer_profile
+Customer "1" -- "1" Wallet : wallet
+Customer "1" -- "0..*" TopUpRequest : topup_requests
+Customer "1" -- "1" Cart : cart
+Cart "1" -- "0..*" CartItem : items
+CartItem "*" -- "1" Product : product
+Customer "1" -- "0..*" Order : orders
+Order "1" -- "1..*" OrderDetail : details
+OrderDetail "*" -- "1" Product : product
+
+note right of Role
+  Role hien chua lien ket FK/M2M
+  voi User/Customer trong code.
+end note
+
+@enduml

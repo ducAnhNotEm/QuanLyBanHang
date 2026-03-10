@@ -47,6 +47,27 @@ body {
   padding-bottom: 40px;
 }
 
+.messages {
+  margin-bottom: 14px;
+}
+
+.message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.message.error {
+  background: #fdeaea;
+  color: #b42318;
+}
+
+.message.success {
+  background: #e7f6ec;
+  color: #157347;
+}
+
 .detail-card {
   background: white;
   border-radius: 14px;
@@ -121,6 +142,8 @@ body {
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -141,6 +164,29 @@ body {
 .btn-danger {
   background: #e63946;
   color: white;
+}
+
+.btn-disabled {
+  background: #c2c7cf;
+  color: #5f6775;
+}
+
+.inline-action-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qty-label {
+  font-weight: 700;
+}
+
+.qty-input {
+  width: 78px;
+  padding: 10px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
 }
 
 .related-section {

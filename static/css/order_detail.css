@@ -1,0 +1,134 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  color: #222;
+}
+
+.container {
+  width: 94%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.order-header {
+  background: #0d6efd;
+  color: white;
+  padding: 16px 0;
+  margin-bottom: 24px;
+}
+
+.header-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 16px;
+  font-weight: 600;
+}
+
+.order-page {
+  padding-bottom: 40px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.order-card h1 {
+  margin-bottom: 8px;
+}
+
+.messages {
+  margin: 10px 0 12px;
+}
+
+.message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.message.error {
+  background: #fdeaea;
+  color: #b42318;
+}
+
+.message.success {
+  background: #e7f6ec;
+  color: #157347;
+}
+
+.order-card p {
+  margin-bottom: 10px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid #eee;
+  padding: 12px 10px;
+  text-align: left;
+}
+
+th {
+  background: #f9fafb;
+}
+
+.total {
+  margin-top: 18px;
+  font-size: 20px;
+}
+
+.actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background: #0d6efd;
+}
+
+.btn-secondary {
+  background: #6c757d;
+}

@@ -1,0 +1,123 @@
+{% load static currency %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng của tôi</title>
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}" />
+  </head>
+  <body>
+    <header class="cart-header">
+      <div class="container header-wrap">
+        <div class="logo">Sales Management</div>
+        <nav class="nav">
+          <a href="{% url 'home' %}">Trang chủ</a>
+          <a href="{% url 'cart' %}">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}">Lịch sử mua</a>
+          <a href="{% url 'logout' %}">Đăng xuất</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container cart-page">
+      <section class="cart-card">
+        <h1>Giỏ hàng của tôi</h1>
+
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if items %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Chọn</th>
+                <th>Sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Tạm tính</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %}
+              <tr>
+                <td>
+                  <form
+                    method="post"
+                    action="{% url 'cart_item_select' item.id %}"
+                    class="inline-form"
+                  >
+                    {% csrf_token %}
+                    <input
+                      type="hidden"
+                      name="is_selected"
+                      value="{% if item.isSelected %}0{% else %}1{% endif %}"
+                    />
+                    <button type="submit" class="btn btn-muted">
+                      {% if item.isSelected %}Bỏ chọn{% else %}Chọn{% endif %}
+                    </button>
+                  </form>
+                </td>
+                <td>{{ item.product.productName }}</td>
+                <td>{{ item.product.formatted_price }}</td>
+                <td>
+                  <form
+                    method="post"
+                    action="{% url 'cart_item_update' item.id %}"
+                    class="inline-form"
+                  >
+                    {% csrf_token %}
+                    <div class="qty-wrap">
+                      <input
+                        type="number"
+                        min="1"
+                        max="{{ item.product.stockQuantity }}"
+                        name="quantity"
+                        value="{{ item.quantity }}"
+                        required
+                      />
+                      <button type="submit" class="btn btn-muted">Cập nhật</button>
+                    </div>
+                  </form>
+                </td>
+                <td>{{ item.subTotal|vnd }} VNĐ</td>
+                <td>
+                  <form
+                    method="post"
+                    action="{% url 'cart_item_remove' item.id %}"
+                    class="inline-form"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="checkout-box">
+          <p>
+            Tổng tiền sản phẩm đã chọn:
+            <strong>{{ selected_total|vnd }} VNĐ</strong>
+          </p>
+          <form method="post" action="{% url 'cart_checkout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Thanh toán sản phẩm đã chọn</button>
+          </form>
+        </div>
+        {% else %}
+        <p>Giỏ hàng đang trống.</p>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>

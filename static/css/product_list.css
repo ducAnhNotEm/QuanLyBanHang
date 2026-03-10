@@ -41,9 +41,50 @@ nav a {
   font-weight: 600;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .page-title {
   margin-bottom: 25px;
   font-size: 28px;
+}
+
+.product-search-form {
+  margin-bottom: 18px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.product-search-form input {
+  width: min(100%, 360px);
+  padding: 9px 11px;
+  border-radius: 999px;
+  border: 1px solid #d7dce4;
+  outline: none;
+}
+
+.product-search-form input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.product-search-form button {
+  border: 1px solid #d7dce4;
+  background: #ecf4ff;
+  color: #0d6efd;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 999px;
+  cursor: pointer;
 }
 
 .product-grid {
