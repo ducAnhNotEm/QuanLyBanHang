@@ -1,12 +1,15 @@
-from django.shortcuts import render, redirect
-from django.views import View
-from django.contrib import messages
+import re
+
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 from django.db import transaction
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views import View
 
 from .forms import RegisterForm
-from .models import Customer, Wallet
+from .models import Customer, Wallet, TopUpRequest
 
 
 class RegisterView(View):
@@ -71,3 +74,140 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('login')
+
+
+class WalletView(View):
+    template_name = 'wallet/wallet.html'
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        if request.user.is_staff:
+            return redirect('home')
+
+        try:
+            customer = request.user.customer_profile
+            wallet = customer.wallet
+        except Customer.DoesNotExist:
+            messages.error(request, 'Không tìm thấy thông tin khách hàng.')
+            return redirect('home')
+        except Wallet.DoesNotExist:
+            messages.error(request, 'Không tìm thấy ví tiền.')
+            return redirect('home')
+
+        return render(request, self.template_name, {
+            'customer': customer,
+            'wallet': wallet,
+        })
+
+
+class TopUpRequestCreateView(View):
+    template_name = 'wallet/topup_request_create.html'
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        if request.user.is_staff:
+            return redirect('home')
+
+        return render(request, self.template_name)
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        if request.user.is_staff:
+            return redirect('home')
+
+        amount_input = (request.POST.get('amount') or '').strip()
+        note = request.POST.get('note')
+
+        if not re.fullmatch(r'[\d\s\.,]+', amount_input):
+            messages.error(request, 'Số tiền không hợp lệ.')
+            return render(request, self.template_name)
+
+        amount_digits = re.sub(r'\D', '', amount_input)
+        if not amount_digits:
+            messages.error(request, 'Số tiền không hợp lệ.')
+            return render(request, self.template_name)
+
+        amount = int(amount_digits)
+
+        if amount <= 0:
+            messages.error(request, 'Số tiền nạp phải lớn hơn 0.')
+            return render(request, self.template_name)
+
+        try:
+            customer = request.user.customer_profile
+        except Customer.DoesNotExist:
+            messages.error(request, 'Không tìm thấy thông tin khách hàng.')
+            return redirect('home')
+
+        TopUpRequest.objects.create(
+            customer=customer,
+            amount=amount,
+            note=note,
+            status='PENDING'
+        )
+
+        messages.success(request, 'Gửi yêu cầu nạp tiền thành công.')
+        return redirect('wallet')
+
+
+class TopUpRequestListView(LoginRequiredMixin, UserPassesTestMixin, View):
+    template_name = 'wallet/topup_request_list.html'
+    login_url = 'login'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get(self, request):
+        requests = TopUpRequest.objects.all().order_by('-id')
+        return render(request, self.template_name, {'requests': requests})
+
+
+class TopUpRequestApproveView(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = 'login'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    @transaction.atomic
+    def post(self, request, id):
+        topup_request = get_object_or_404(TopUpRequest, id=id)
+
+        if topup_request.status != 'PENDING':
+            messages.error(request, 'Yêu cầu này đã được xử lý trước đó.')
+            return redirect('topup_request_list')
+
+        wallet = topup_request.customer.wallet
+        wallet.balance += topup_request.amount
+        wallet.save()
+
+        topup_request.status = 'APPROVED'
+        topup_request.save()
+
+        messages.success(request, 'Đã duyệt yêu cầu nạp tiền và cộng tiền vào ví.')
+        return redirect('topup_request_list')
+
+
+class TopUpRequestRejectView(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = 'login'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def post(self, request, id):
+        topup_request = get_object_or_404(TopUpRequest, id=id)
+
+        if topup_request.status != 'PENDING':
+            messages.error(request, 'Yêu cầu này đã được xử lý trước đó.')
+            return redirect('topup_request_list')
+
+        topup_request.status = 'REJECTED'
+        topup_request.save()
+
+        messages.success(request, 'Đã từ chối yêu cầu nạp tiền.')
+        return redirect('topup_request_list')

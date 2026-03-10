@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  color: #222;
+}
+
+.container {
+  width: 94%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  background: #1f2937;
+  color: white;
+  padding: 16px 0;
+  margin-bottom: 28px;
+}
+
+.header-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 16px;
+  font-weight: 600;
+}
+
+.request-page {
+  padding-bottom: 40px;
+}
+
+.request-card {
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.request-card h1 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f9fafb;
+}
+
+th,
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  vertical-align: top;
+}
+
+.status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-approved {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-rejected {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.inline-form {
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+
+.btn {
+  border: none;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-approve {
+  background: #198754;
+}
+
+.btn-reject {
+  background: #dc3545;
+}
+
+.done-text {
+  color: #666;
+  font-weight: 600;
+}
+
+.messages {
+  margin-bottom: 18px;
+}
+
+.message {
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.message.error {
+  background: #fdeaea;
+  color: #b42318;
+}
+
+.message.success {
+  background: #e7f6ec;
+  color: #157347;
+}

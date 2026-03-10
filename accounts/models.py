@@ -39,7 +39,7 @@ class Customer(models.Model):
         )
 class Wallet(models.Model):
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name='wallet')
-    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    balance = models.PositiveBigIntegerField(default=0)
     def __str__(self):
         return f"Ví của {self.customer.fullName}"
 class TopUpRequest(models.Model):
@@ -52,7 +52,7 @@ class TopUpRequest(models.Model):
         Customer,
         on_delete=models.CASCADE,
         related_name='topup_requests')
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.PositiveBigIntegerField()
     note = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     def __str__(self):

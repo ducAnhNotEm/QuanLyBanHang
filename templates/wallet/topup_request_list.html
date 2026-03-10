@@ -1,0 +1,96 @@
+{% load static currency %}
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh sách yêu cầu nạp tiền</title>
+    <link rel="stylesheet" href="{% static 'css/topup_request_list.css' %}" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div class="container header-wrap">
+        <div class="logo">Sales Management Admin</div>
+
+        <nav class="nav">
+          <a href="{% url 'home' %}">Trang chủ</a>
+          <a href="/admin/">Django Admin</a>
+          <a href="{% url 'logout' %}">Đăng xuất</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container request-page">
+      <section class="request-card">
+        <h1>Danh sách yêu cầu nạp tiền</h1>
+
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Khách hàng</th>
+                <th>Số tiền</th>
+                <th>Ghi chú</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in requests %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.customer.fullName }}</td>
+                <td>{{ item.amount|vnd }} VNĐ</td>
+                <td>{{ item.note|default:"Không có ghi chú" }}</td>
+                <td>
+                  <span class="status status-{{ item.status|lower }}">
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td>
+                  {% if item.status == 'PENDING' %}
+                  <form
+                    method="post"
+                    action="{% url 'topup_request_approve' item.id %}"
+                    class="inline-form"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-approve">Duyệt</button>
+                  </form>
+
+                  <form
+                    method="post"
+                    action="{% url 'topup_request_reject' item.id %}"
+                    class="inline-form"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-reject">
+                      Từ chối
+                    </button>
+                  </form>
+                  {% else %}
+                  <span class="done-text">Đã xử lý</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6">Chưa có yêu cầu nạp tiền nào.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

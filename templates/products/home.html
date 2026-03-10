@@ -47,8 +47,10 @@
         <div class="logo">Sales Management</div>
 
         <nav class="main-nav">
-          {% if request.user.is_authenticated %}
-          <span class="user-greeting">Xin chào, {{ request.user.username }}</span>
+          {% if request.user.is_authenticated and not request.user.is_staff %}
+          <span class="user-greeting"
+            >Xin chào, {{ request.user.username }}</span
+          >
           {% endif %}
           <a href="{% url 'home' %}">Trang chủ</a>
 
@@ -57,9 +59,11 @@
 
           {% if request.user.is_staff %}
           <a href="{% url 'product_create' %}">Thêm sản phẩm</a>
+          <a href="{% url 'topup_request_list' %}">Yêu cầu nạp tiền</a>
           <a href="/admin/">Admin</a>
           {% else %}
-          <span class="nav-disabled" aria-disabled="true">Ví tiền</span>
+          <a href="{% url 'wallet' %}">Ví tiền</a>
+          <a href="{% url 'topup_request_create' %}">Nạp tiền</a>
           {% endif %}
 
           <a href="{% url 'logout' %}">Đăng xuất</a>
@@ -70,7 +74,9 @@
         </nav>
 
         <form method="get" action="{% url 'home' %}" class="header-search-form">
-          <label for="header-search-keyword" class="sr-only">Tìm kiếm sản phẩm</label>
+          <label for="header-search-keyword" class="sr-only"
+            >Tìm kiếm sản phẩm</label
+          >
           <input
             id="header-search-keyword"
             type="text"
