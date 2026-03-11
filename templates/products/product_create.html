@@ -23,6 +23,7 @@
           <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
           <a href="{% url 'product_list' %}" class="nav-link">Danh sách sản phẩm</a>
           <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'discount_code_list' %}" class="nav-link">Mã giảm giá</a>
           <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
         </nav>
       </div>
@@ -97,6 +98,20 @@
                   required
                   value="{{ request.POST.price|default:'' }}"
                   placeholder="0.00"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="discountPercent">Discount (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  id="discountPercent"
+                  name="discountPercent"
+                  value="{{ request.POST.discountPercent|default:'0' }}"
+                  placeholder="0"
                 />
               </div>
 

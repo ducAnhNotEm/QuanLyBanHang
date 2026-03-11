@@ -51,6 +51,19 @@
   font-weight: 800;
 }
 
+.detail-price-original {
+  margin: 0;
+  color: #8b98a9;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+.detail-discount {
+  margin: 4px 0 0;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
 .detail-stock {
   margin: 0;
   color: #0f766e;
@@ -96,6 +109,13 @@
   border: 1px solid #d6deea;
   border-radius: 12px;
   padding: 10px 8px;
+}
+
+.coupon-input {
+  width: 150px;
+  border: 1px solid #d6deea;
+  border-radius: 12px;
+  padding: 10px 10px;
 }
 
 .btn-disabled {

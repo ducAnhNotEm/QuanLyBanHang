@@ -390,6 +390,14 @@ img {
   font-weight: 700;
 }
 
+.slide-info .price-old {
+  margin-top: 4px;
+  color: #8a98a8;
+  font-weight: 600;
+  text-decoration: line-through;
+  font-size: 12px;
+}
+
 .layout-grid {
   display: grid;
   grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
@@ -483,6 +491,13 @@ img {
   font-size: 13px;
 }
 
+.aside-price-old {
+  margin: 3px 0 0;
+  color: #8a98a8;
+  text-decoration: line-through;
+  font-size: 11px;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -523,6 +538,24 @@ img {
   color: #c2410c;
   font-weight: 800;
   font-size: 19px;
+}
+
+.price-old {
+  margin: 2px 0 0;
+  color: #8a98a8;
+  text-decoration: line-through;
+  font-size: 14px;
+}
+
+.discount-chip {
+  margin: 6px 0 0;
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .stock {

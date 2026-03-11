@@ -18,10 +18,22 @@
 }
 
 .order-total {
-  margin: 16px 0 0;
+  margin: 6px 0 0;
   font-size: 21px;
   color: var(--accent-strong);
   font-weight: 800;
+}
+
+.order-summary {
+  margin-top: 16px;
+}
+
+.order-summary p {
+  margin: 0;
+}
+
+.order-summary p + p {
+  margin-top: 4px;
 }
 
 .actions {

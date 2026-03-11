@@ -58,6 +58,7 @@
                   <th>Sản phẩm</th>
                   <th>Đơn giá</th>
                   <th>Số lượng</th>
+                  <th>Giảm giá</th>
                   <th>Thành tiền</th>
                 </tr>
               </thead>
@@ -67,6 +68,7 @@
                   <td>{{ detail.product.productName }}</td>
                   <td>{{ detail.unitPrice|vnd }} VNĐ</td>
                   <td>{{ detail.quantity }}</td>
+                  <td>{{ detail.discountAmount|vnd }} VNĐ ({{ detail.discountPercent|floatformat:"-2" }}%)</td>
                   <td>{{ detail.subTotal|vnd }} VNĐ</td>
                 </tr>
                 {% endfor %}
@@ -74,7 +76,15 @@
             </table>
           </div>
 
-          <p class="order-total">Tổng thanh toán: {{ order.totalAmount|vnd }} VNĐ</p>
+          <div class="order-summary">
+            <p>Tạm tính: {{ order.subTotalAmount|vnd }} VNĐ</p>
+            <p>Giảm theo sản phẩm: -{{ product_discount_amount|vnd }} VNĐ</p>
+            {% if order.couponCode %}
+            <p>Mã giảm giá ({{ order.couponCode }}): -{{ order.couponDiscountAmount|vnd }} VNĐ</p>
+            {% endif %}
+            <p>Tổng giảm: -{{ order.discountAmount|vnd }} VNĐ</p>
+            <p class="order-total">Tổng thanh toán: {{ order.totalAmount|vnd }} VNĐ</p>
+          </div>
 
           <div class="actions">
             <a href="{% url 'home' %}" class="btn btn-secondary">Về trang chủ</a>

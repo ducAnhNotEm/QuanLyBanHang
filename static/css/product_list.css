@@ -107,6 +107,24 @@
   font-weight: 800;
 }
 
+.price-old {
+  margin: 3px 0 0;
+  color: #8391a1;
+  text-decoration: line-through;
+  font-size: 14px;
+}
+
+.discount-chip {
+  margin: 6px 0 0;
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .stock {
   margin: 5px 0 0;
   color: #556170;

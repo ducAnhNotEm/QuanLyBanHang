@@ -8,6 +8,8 @@ from .views import (
     CartItemSelectionToggleView,
     CartItemUpdateView,
     CartView,
+    DiscountCodeListView,
+    DiscountCodeToggleView,
     OrderDetailView,
     OrderHistoryView,
 )
@@ -21,6 +23,8 @@ urlpatterns = [
     path('cart/item/<int:item_id>/select/', CartItemSelectionToggleView.as_view(), name='cart_item_select'),
     path('cart/checkout/', CartCheckoutView.as_view(), name='cart_checkout'),
     path('buy-now/<int:product_id>/', BuyNowView.as_view(), name='buy_now'),
+    path('discount-codes/', DiscountCodeListView.as_view(), name='discount_code_list'),
+    path('discount-codes/<int:id>/toggle/', DiscountCodeToggleView.as_view(), name='discount_code_toggle'),
     path('orders/<int:id>/', OrderDetailView.as_view(), name='order_detail'),
     path('orders/history/', OrderHistoryView.as_view(), name='order_history'),
 ]

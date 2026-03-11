@@ -23,6 +23,7 @@
           <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
           <a href="{% url 'product_list' %}" class="nav-link">Danh sách sản phẩm</a>
           <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'discount_code_list' %}" class="nav-link">Mã giảm giá</a>
           <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
         </nav>
       </div>
@@ -40,6 +41,10 @@
             <h2>Thông tin cần chỉnh sửa</h2>
             <p>Sau khi lưu, slug sản phẩm sẽ được tạo lại theo tên mới.</p>
           </div>
+
+          {% if error %}
+          <p class="alert alert-error">{{ error }}</p>
+          {% endif %}
 
           <form method="post" enctype="multipart/form-data" class="product-form">
             {% csrf_token %}
@@ -82,6 +87,19 @@
                   name="price"
                   value="{{ product.price }}"
                   required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="discountPercent">Discount (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  id="discountPercent"
+                  name="discountPercent"
+                  value="{{ product.discountPercent }}"
                 />
               </div>
 

@@ -42,7 +42,7 @@
         "offers": {
           "@type": "Offer",
           "priceCurrency": "VND",
-          "price": "{{ product.price }}",
+          "price": "{{ product.discounted_price }}",
           "availability": "{% if product.stockQuantity > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
         }
       }
@@ -66,6 +66,7 @@
             {% if request.user.is_staff %}
           <a href="{% url 'product_create' %}" class="nav-link">Thêm sản phẩm</a>
           <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'discount_code_list' %}" class="nav-link">Mã giảm giá</a>
             {% else %}
           <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
           <a href="{% url 'order_history' %}" class="nav-link">Lịch sử mua</a>
@@ -101,7 +102,13 @@
 
           <div class="detail-info">
             <h1>{{ product.productName }}</h1>
+            {% if product.clamped_discount_percent > 0 %}
+            <p class="detail-price">{{ product.formatted_discounted_price }}</p>
+            <p class="detail-price-original">{{ product.formatted_price }}</p>
+            <p class="detail-discount">Giảm {{ product.clamped_discount_percent|floatformat:"-2" }}%</p>
+            {% else %}
             <p class="detail-price">{{ product.formatted_price }}</p>
+            {% endif %}
             <p class="detail-stock">Tồn kho: {{ product.stockQuantity }}</p>
 
             <div class="detail-description">
@@ -153,6 +160,13 @@
                     value="1"
                     required
                   />
+                  <input
+                    id="buy-now-discount"
+                    class="coupon-input"
+                    type="text"
+                    name="discount_code"
+                    placeholder="Mã giảm giá"
+                  />
                   <button type="submit" class="btn btn-primary">Mua ngay</button>
                 </form>
                 {% else %}
@@ -176,7 +190,11 @@
               <div class="small-no-image">No Image</div>
               {% endif %}
               <h3>{{ item.productName }}</h3>
+              {% if item.clamped_discount_percent > 0 %}
+              <p>{{ item.formatted_discounted_price }}</p>
+              {% else %}
               <p>{{ item.formatted_price }}</p>
+              {% endif %}
             </a>
             {% empty %}
             <p class="empty-state">Chưa có sản phẩm liên quan.</p>

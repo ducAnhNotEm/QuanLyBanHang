@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -5,6 +7,19 @@ from django.urls import reverse
 from django.views import View
 
 from .models import Product
+
+
+def parse_discount_percent(value):
+    raw_value = (value or '').strip()
+    if raw_value == '':
+        return Decimal('0')
+    try:
+        discount = Decimal(raw_value)
+    except (TypeError, ValueError, InvalidOperation):
+        return None
+    if discount < Decimal('0') or discount > Decimal('100'):
+        return None
+    return discount
 
 
 def ensure_product_slugs():
@@ -108,6 +123,7 @@ class ProductCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
         category = request.POST.get('category', '').strip()
         description = request.POST.get('description', '').strip()
         price = request.POST.get('price', '').strip()
+        discount_percent = parse_discount_percent(request.POST.get('discountPercent'))
         stockQuantity = request.POST.get('stockQuantity', '').strip()
         image = request.FILES.get('image')
 
@@ -116,12 +132,18 @@ class ProductCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
                 'categories': Product.CATEGORY_CHOICES,
                 'error': 'Vui lòng nhập đầy đủ thông tin.'
             })
+        if discount_percent is None:
+            return render(request, self.template_name, {
+                'categories': Product.CATEGORY_CHOICES,
+                'error': 'Discount phải nằm trong khoảng từ 0 đến 100.'
+            })
 
         Product.objects.create(
             productName=productName,
             category=category,
             description=description,
             price=price,
+            discountPercent=discount_percent,
             stockQuantity=stockQuantity,
             image=image
         )
@@ -144,11 +166,19 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def post(self, request, id):
         product = get_object_or_404(Product, id=id)
+        discount_percent = parse_discount_percent(request.POST.get('discountPercent'))
+        if discount_percent is None:
+            return render(request, self.template_name, {
+                'product': product,
+                'categories': Product.CATEGORY_CHOICES,
+                'error': 'Discount phải nằm trong khoảng từ 0 đến 100.',
+            })
 
         product.productName = request.POST.get('productName', '').strip()
         product.category = request.POST.get('category', '').strip()
         product.description = request.POST.get('description', '').strip()
         product.price = request.POST.get('price', '').strip()
+        product.discountPercent = discount_percent
         product.stockQuantity = request.POST.get('stockQuantity', '').strip()
 
         image = request.FILES.get('image')

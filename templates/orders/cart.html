@@ -56,6 +56,8 @@
                   <th>Đơn giá</th>
                   <th>Số lượng</th>
                   <th>Tạm tính</th>
+                  <th>Giảm giá</th>
+                  <th>Thanh toán</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -72,7 +74,14 @@
                     </form>
                   </td>
                   <td>{{ item.product.productName }}</td>
-                  <td>{{ item.product.formatted_price }}</td>
+                  <td>
+                    {% if item.product.clamped_discount_percent > 0 %}
+                    <div>{{ item.product.formatted_discounted_price }}</div>
+                    <small>{{ item.product.formatted_price }} (-{{ item.product.clamped_discount_percent|floatformat:"-2" }}%)</small>
+                    {% else %}
+                    {{ item.product.formatted_price }}
+                    {% endif %}
+                  </td>
                   <td>
                     <form method="post" action="{% url 'cart_item_update' item.id %}" class="inline-form">
                       {% csrf_token %}
@@ -89,7 +98,9 @@
                       </div>
                     </form>
                   </td>
-                  <td>{{ item.subTotal|vnd }} VNĐ</td>
+                  <td>{{ item.display_subtotal|vnd }} VNĐ</td>
+                  <td>{{ item.display_discount|vnd }} VNĐ</td>
+                  <td>{{ item.display_total|vnd }} VNĐ</td>
                   <td>
                     <form method="post" action="{% url 'cart_item_remove' item.id %}" class="inline-form">
                       {% csrf_token %}
@@ -103,12 +114,21 @@
           </div>
 
           <div class="cart-summary">
-            <p>
-              Tổng tiền sản phẩm đã chọn:
-              <strong>{{ selected_total|vnd }} VNĐ</strong>
-            </p>
-            <form method="post" action="{% url 'cart_checkout' %}">
+            <div class="summary-lines">
+              <p>Tạm tính: <strong>{{ selected_subtotal|vnd }} VNĐ</strong></p>
+              <p>Giảm theo sản phẩm: <strong>-{{ selected_discount|vnd }} VNĐ</strong></p>
+              <p>Tổng thanh toán: <strong>{{ selected_total|vnd }} VNĐ</strong></p>
+            </div>
+            <form method="post" action="{% url 'cart_checkout' %}" class="checkout-form">
               {% csrf_token %}
+              <label for="cart-discount-code">Mã giảm giá</label>
+              <input
+                id="cart-discount-code"
+                type="text"
+                name="discount_code"
+                class="discount-code-input"
+                placeholder="Nhập mã nếu có"
+              />
               <button type="submit" class="btn btn-primary">Thanh toán sản phẩm đã chọn</button>
             </form>
           </div>

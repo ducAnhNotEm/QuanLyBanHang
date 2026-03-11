@@ -11,6 +11,34 @@
   align-items: center;
 }
 
+.summary-lines p {
+  margin: 0;
+}
+
+.summary-lines p + p {
+  margin-top: 4px;
+}
+
+.checkout-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.checkout-form label {
+  font-weight: 700;
+  color: #3f4b59;
+}
+
+.discount-code-input {
+  height: 40px;
+  min-width: 220px;
+  border: 1px solid #d6deea;
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
 .inline-form {
   display: inline-block;
 }
@@ -39,5 +67,14 @@
 @media (max-width: 760px) {
   .cart-summary {
     align-items: stretch;
+  }
+
+  .checkout-form {
+    align-items: stretch;
+  }
+
+  .discount-code-input {
+    min-width: 0;
+    width: 100%;
   }
 }

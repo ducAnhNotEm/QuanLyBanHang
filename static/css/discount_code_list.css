@@ -1,0 +1,79 @@
+.discount-page {
+  padding: 34px 0 56px;
+}
+
+.discount-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.create-panel,
+.list-panel {
+  border: 1px solid #ecdcc6;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fffefb;
+}
+
+.create-panel h2,
+.list-panel h2 {
+  margin: 0 0 12px;
+  color: #2d342f;
+  font-size: 22px;
+}
+
+.form-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.code-chip {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #eef8ff;
+  color: #0f5173;
+  border: 1px solid #b9deff;
+  font-weight: 700;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.status-active {
+  color: #166534;
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
+}
+
+.status-inactive {
+  color: #92400e;
+  background: #fff7e6;
+  border: 1px solid #fddca0;
+}
+
+.inline-form {
+  display: inline-block;
+}
+
+.nav-link-active {
+  background: #f7ead4;
+  color: var(--primary-strong);
+}
+
+.table-wrap table tbody tr:hover {
+  background: #fffbf4;
+}
+
+@media (max-width: 1024px) {
+  .discount-grid {
+    grid-template-columns: 1fr;
+  }
+}

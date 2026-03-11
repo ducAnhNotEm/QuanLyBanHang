@@ -26,6 +26,7 @@
             {% if request.user.is_staff %}
           <a href="{% url 'product_create' %}" class="nav-link">Thêm sản phẩm</a>
           <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'discount_code_list' %}" class="nav-link">Mã giảm giá</a>
             {% else %}
           <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
           <a href="{% url 'order_history' %}" class="nav-link">Lịch sử mua</a>
@@ -79,7 +80,13 @@
                   Không có mô tả.
                   {% endif %}
                 </p>
+                {% if product.clamped_discount_percent > 0 %}
+                <p class="price">{{ product.formatted_discounted_price }}</p>
+                <p class="price-old">{{ product.formatted_price }}</p>
+                <p class="discount-chip">-{{ product.clamped_discount_percent|floatformat:"-2" }}%</p>
+                {% else %}
                 <p class="price">{{ product.formatted_price }}</p>
+                {% endif %}
                 <p class="stock">Tồn kho: {{ product.stockQuantity }}</p>
 
                 <div class="product-actions">

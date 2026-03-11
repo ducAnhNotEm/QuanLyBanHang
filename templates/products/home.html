@@ -32,6 +32,7 @@
             {% if request.user.is_staff %}
           <a href="{% url 'product_create' %}" class="nav-link">Thêm sản phẩm</a>
           <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'discount_code_list' %}" class="nav-link">Mã giảm giá</a>
           <a href="/admin/" class="nav-link">Admin</a>
             {% else %}
           <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
@@ -122,7 +123,12 @@
               <div class="slide-info">
                 <span class="chip">{{ product.get_category_display }}</span>
                 <h3>{{ product.productName }}</h3>
+                {% if product.clamped_discount_percent > 0 %}
+                <p>{{ product.formatted_discounted_price }}</p>
+                <p class="price-old">Giá gốc: {{ product.formatted_price }}</p>
+                {% else %}
                 <p>{{ product.formatted_price }}</p>
+                {% endif %}
               </div>
             </a>
             {% empty %}
@@ -169,7 +175,12 @@
                   {% endif %}
                   <div class="aside-copy">
                     <p class="aside-name">{{ product.productName }}</p>
+                    {% if product.clamped_discount_percent > 0 %}
+                    <p class="aside-price">{{ product.formatted_discounted_price }}</p>
+                    <p class="aside-price-old">{{ product.formatted_price }}</p>
+                    {% else %}
                     <p class="aside-price">{{ product.formatted_price }}</p>
+                    {% endif %}
                   </div>
                 </a>
                 {% empty %}
@@ -211,7 +222,13 @@
                       Không có mô tả.
                       {% endif %}
                     </p>
+                    {% if product.clamped_discount_percent > 0 %}
+                    <p class="price">{{ product.formatted_discounted_price }}</p>
+                    <p class="price-old">{{ product.formatted_price }}</p>
+                    <p class="discount-chip">-{{ product.clamped_discount_percent|floatformat:"-2" }}%</p>
+                    {% else %}
                     <p class="price">{{ product.formatted_price }}</p>
+                    {% endif %}
                     <p class="stock">Tồn kho: {{ product.stockQuantity }}</p>
                   </div>
                 </a>
