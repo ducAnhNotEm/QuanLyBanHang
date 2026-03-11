@@ -5,28 +5,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Xóa sản phẩm</title>
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/product_delete.css' %}" />
   </head>
   <body>
-    <div class="delete-wrapper">
-      <div class="delete-card">
-        <h1>Xác nhận xóa sản phẩm</h1>
-        <p>Bạn có chắc muốn xóa sản phẩm này không?</p>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <div class="product-box">
-          <p><strong>Tên sản phẩm:</strong> {{ product.productName }}</p>
-          <p><strong>Giá:</strong> {{ product.formatted_price }}</p>
-          <p><strong>Tồn kho:</strong> {{ product.stockQuantity }}</p>
-        </div>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
 
-        <form method="post">
-          {% csrf_token %}
-          <div class="delete-actions">
-            <a href="{% url 'product_list' %}" class="btn btn-secondary">Hủy</a>
-            <button type="submit" class="btn btn-danger">Xóa sản phẩm</button>
-          </div>
-        </form>
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'product_list' %}" class="nav-link">Danh sách sản phẩm</a>
+          <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
+        </nav>
       </div>
-    </div>
+    </header>
+
+    <main class="delete-page">
+      <div class="container">
+        <section class="page-card delete-card">
+          <h1>Xác nhận xóa sản phẩm</h1>
+          <p class="lead">Hành động này không thể hoàn tác. Hãy kiểm tra kỹ thông tin trước khi xóa.</p>
+
+          <div class="product-box">
+            <p><strong>Tên sản phẩm:</strong> {{ product.productName }}</p>
+            <p><strong>Giá:</strong> {{ product.formatted_price }}</p>
+            <p><strong>Tồn kho:</strong> {{ product.stockQuantity }}</p>
+          </div>
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="delete-actions">
+              <a href="{% url 'product_list' %}" class="btn btn-secondary">Hủy</a>
+              <button type="submit" class="btn btn-danger">Xóa sản phẩm</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
   </body>
 </html>

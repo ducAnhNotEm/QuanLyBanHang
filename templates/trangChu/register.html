@@ -1,105 +1,135 @@
 {% load static %}
 <!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>Đăng ký - Quản lý bán hàng</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container">
-        <div class="logo">Sales Management System</div>
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <form method="post" action="{% url 'register' %}">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
+
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'login' %}" class="nav-link">Đăng nhập</a>
+          <a href="{% url 'register' %}" class="nav-link">Đăng ký</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="auth-shell">
+      <div class="container">
+        <section class="page-card auth-card">
+          <div class="auth-brand">
+            <h1 class="title">Đăng ký tài khoản</h1>
+            <p>Tạo tài khoản để mua hàng và quản lý ví tiền của bạn.</p>
+          </div>
+
+          <form method="post" action="{% url 'register' %}" class="auth-form">
             {% csrf_token %}
 
             {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
+            <ul class="messages-list">
+              {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+            </ul>
             {% endif %}
 
             {% if form.errors %}
-                <ul class="messages">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li class="error">{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <li class="error">{{ error }}</li>
-                    {% endfor %}
-                </ul>
+            <ul class="messages-list">
+              {% for field in form %}
+                {% for error in field.errors %}
+              <li class="error">{{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+              <li class="error">{{ error }}</li>
+              {% endfor %}
+            </ul>
             {% endif %}
 
-            <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" name="username" value="{{ form.username.value|default:'' }}" required>
-            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="username">Tên đăng nhập *</label>
+                <input type="text" id="username" name="username" value="{{ form.username.value|default:'' }}" required />
+              </div>
 
-            <div class="form-group">
-                <label>Họ và tên</label>
-                <input type="text" name="fullName" value="{{ form.fullName.value|default:'' }}" required>
-            </div>
+              <div class="form-group">
+                <label for="fullName">Họ và tên *</label>
+                <input type="text" id="fullName" name="fullName" value="{{ form.fullName.value|default:'' }}" required />
+              </div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ form.email.value|default:'' }}" required>
-            </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" value="{{ form.email.value|default:'' }}" required />
+              </div>
 
-            <div class="form-group">
-                <label>Số điện thoại</label>
-                <input type="text" name="phoneNumber" value="{{ form.phoneNumber.value|default:'' }}" required>
-            </div>
+              <div class="form-group">
+                <label for="phoneNumber">Số điện thoại *</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" value="{{ form.phoneNumber.value|default:'' }}" required />
+              </div>
 
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" name="password" required>
-            </div>
+              <div class="form-group">
+                <label for="password">Mật khẩu *</label>
+                <input type="password" id="password" name="password" required />
+              </div>
 
-            <div class="form-group">
-                <label>Xác nhận mật khẩu</label>
-                <input type="password" name="confirm_password" required>
-            </div>
+              <div class="form-group">
+                <label for="confirm_password">Xác nhận mật khẩu *</label>
+                <input type="password" id="confirm_password" name="confirm_password" required />
+              </div>
 
-            <div class="form-group">
-                <label>Địa chỉ</label>
-                <input type="text" name="address" value="{{ form.address.value|default:'' }}">
-            </div>
+              <div class="form-group">
+                <label for="address">Địa chỉ</label>
+                <input type="text" id="address" name="address" value="{{ form.address.value|default:'' }}" />
+              </div>
 
-            <div class="form-group">
-                <label>Ngày sinh</label>
-                <input type="date" name="dateOfBirth" value="{{ form.dateOfBirth.value|default:'' }}">
-            </div>
+              <div class="form-group">
+                <label for="dateOfBirth">Ngày sinh</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" value="{{ form.dateOfBirth.value|default:'' }}" />
+              </div>
 
-            <div class="form-group">
+              <div class="form-group full-width">
                 <label>Giới tính</label>
                 <div class="gender-group">
-                    <label class="gender-option">
-                        <input type="radio" name="gender" value="Nam" {% if form.gender.value == "Nam" or not form.gender.value %}checked{% endif %}>
-                        <span>Nam</span>
-                    </label>
-                    <label class="gender-option">
-                        <input type="radio" name="gender" value="Nữ" {% if form.gender.value == "Nữ" %}checked{% endif %}>
-                        <span>Nữ</span>
-                    </label>
-                    <label class="gender-option">
-                        <input type="radio" name="gender" value="Khác" {% if form.gender.value == "Khác" %}checked{% endif %}>
-                        <span>Khác</span>
-                    </label>
+                  <label class="gender-option">
+                    <input type="radio" name="gender" value="Nam" {% if form.gender.value == "Nam" or not form.gender.value %}checked{% endif %} />
+                    <span>Nam</span>
+                  </label>
+                  <label class="gender-option">
+                    <input type="radio" name="gender" value="Nữ" {% if form.gender.value == "Nữ" %}checked{% endif %} />
+                    <span>Nữ</span>
+                  </label>
+                  <label class="gender-option">
+                    <input type="radio" name="gender" value="Khác" {% if form.gender.value == "Khác" %}checked{% endif %} />
+                    <span>Khác</span>
+                  </label>
                 </div>
+              </div>
             </div>
 
-            <button type="submit">Tạo tài khoản</button>
-        </form>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary auth-submit">Tạo tài khoản</button>
+            </div>
+          </form>
 
-        <div class="links">
+          <div class="links">
             Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập</a>
-        </div>
-    </div>
-</body>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
 </html>

@@ -1,113 +1,45 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
-  color: #222;
-}
-
-.container {
-  width: 94%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.history-header {
-  background: #0d6efd;
-  color: white;
-  padding: 16px 0;
-  margin-bottom: 24px;
-}
-
-.header-wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.nav a {
-  color: white;
-  text-decoration: none;
-  margin-left: 16px;
-  font-weight: 600;
-}
-
 .history-page {
-  padding-bottom: 40px;
+  padding: 34px 0 56px;
 }
 
-.history-card {
-  background: white;
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
 
-.history-card h1 {
-  margin-bottom: 16px;
+.status-pill.paid,
+.status-pill.approved,
+.status-pill.completed {
+  color: #166534;
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
 }
 
-.table-wrap {
-  overflow-x: auto;
+.status-pill.pending {
+  color: #92400e;
+  background: #fff7e6;
+  border: 1px solid #fddca0;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.status-pill.cancelled,
+.status-pill.rejected,
+.status-pill.failed {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border: 1px solid #fecaca;
 }
 
-th,
-td {
-  border-bottom: 1px solid #eee;
-  padding: 12px 10px;
-  text-align: left;
+.table-wrap table tbody tr:hover {
+  background: #fffbf4;
 }
 
-th {
-  background: #f9fafb;
-}
-
-.btn {
-  border: none;
-  padding: 8px 10px;
-  border-radius: 8px;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.btn-detail {
-  background: #0d6efd;
-}
-
-.messages {
-  margin-bottom: 14px;
-}
-
-.message {
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.message.error {
-  background: #fdeaea;
-  color: #b42318;
-}
-
-.message.success {
-  background: #e7f6ec;
-  color: #157347;
+.btn.btn-outline {
+  color: #0f5f58 !important;
+  background: #dff7f2;
+  border-color: #6ecfbe;
 }

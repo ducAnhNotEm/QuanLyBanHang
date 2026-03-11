@@ -4,114 +4,129 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thêm sản phẩm | Quản trị sản phẩm</title>
-    <meta
-      name="description"
-      content="Trang thêm sản phẩm dành cho quản trị viên của hệ thống quản lý bán hàng."
-    />
+    <title>Thêm sản phẩm</title>
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/product_create.css' %}" />
   </head>
   <body>
-    <header class="admin-header">
-      <div class="container header-wrap">
-        <div class="brand">
-          <span class="brand-main">Sales Management</span>
-          <span class="brand-sub">Admin Panel</span>
-        </div>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <nav class="admin-nav">
-          <a href="{% url 'home' %}">Trang chủ</a>
-          <a href="{% url 'product_list' %}">Danh sách sản phẩm</a>
-          <a href="/admin/">Django Admin</a>
-          <a href="{% url 'logout' %}">Đăng xuất</a>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
+
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'product_list' %}" class="nav-link">Danh sách sản phẩm</a>
+          <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
         </nav>
       </div>
     </header>
 
-    <main class="container page-wrap">
-      <section class="page-intro">
-        <h1>Thêm sản phẩm mới</h1>
-        <p>
-          Quản trị viên có thể thêm sản phẩm mới vào hệ thống để hiển thị ngay
-          trên trang chủ và cho phép người dùng xem chi tiết sản phẩm.
-        </p>
-      </section>
-
-      <section class="form-card">
-        <div class="form-card-header">
-          <h2>Thông tin sản phẩm</h2>
-          <p>Điền đầy đủ thông tin bên dưới để tạo sản phẩm mới.</p>
-        </div>
-
-        {% if error %}
-        <div class="alert alert-error">{{ error }}</div>
-        {% endif %}
-
-        <form method="post" enctype="multipart/form-data" class="product-form">
-          {% csrf_token %}
-
-          <div class="form-grid">
-            <div class="form-group full-width">
-              <label for="productName">Tên sản phẩm</label>
-              <input
-                type="text"
-                id="productName"
-                name="productName"
-                placeholder="Ví dụ: Bánh snack vị phô mai"
-                required
-              />
-            </div>
-
-            <div class="form-group full-width">
-              <label for="description">Mô tả sản phẩm</label>
-              <textarea
-                id="description"
-                name="description"
-                rows="5"
-                placeholder="Nhập mô tả chi tiết về sản phẩm..."
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="price">Giá bán</label>
-              <input
-                type="number"
-                step="0.01"
-                id="price"
-                name="price"
-                placeholder="Ví dụ: 15000"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="stockQuantity">Số lượng tồn kho</label>
-              <input
-                type="number"
-                id="stockQuantity"
-                name="stockQuantity"
-                placeholder="Ví dụ: 50"
-                required
-              />
-            </div>
-
-            <div class="form-group full-width">
-              <label for="image">Hình ảnh sản phẩm</label>
-              <input type="file" id="image" name="image" accept="image/*" />
-              <small
-                >Chấp nhận các định dạng ảnh phổ biến như JPG, PNG, WEBP.</small
-              >
-            </div>
+    <main class="manage-page">
+      <div class="container manage-card">
+        <section class="page-card">
+          <div class="manage-head page-head">
+            <h1>Tạo sản phẩm mới</h1>
+            <p>Điền thông tin chi tiết để sản phẩm hiển thị rõ ràng trong hệ thống.</p>
           </div>
 
-          <div class="form-actions">
-            <a href="{% url 'product_list' %}" class="btn btn-secondary"
-              >Quay lại</a
-            >
-            <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+          <div class="form-card-header">
+            <h2>Thông tin sản phẩm</h2>
+            <p>Trường có dấu * là bắt buộc.</p>
           </div>
-        </form>
-      </section>
+
+          {% if error %}
+          <p class="alert alert-error">{{ error }}</p>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" class="product-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="productName">Tên sản phẩm *</label>
+                <input
+                  type="text"
+                  id="productName"
+                  name="productName"
+                  required
+                  value="{{ request.POST.productName|default:'' }}"
+                  placeholder="Ví dụ: Trà xanh đóng chai 500ml"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="category">Phân loại *</label>
+                <select id="category" name="category" required>
+                  <option value="">-- Chọn phân loại --</option>
+                  {% for value, label in categories %}
+                  <option
+                    value="{{ value }}"
+                    {% if request.POST.category == value %}selected{% endif %}
+                  >
+                    {{ label }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="description">Mô tả</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="5"
+                  placeholder="Mô tả ngắn về công dụng, điểm nổi bật hoặc thông tin vận chuyển..."
+                >{{ request.POST.description|default:'' }}</textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="price">Giá bán (VND) *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  id="price"
+                  name="price"
+                  required
+                  value="{{ request.POST.price|default:'' }}"
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="stockQuantity">Số lượng tồn *</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="stockQuantity"
+                  name="stockQuantity"
+                  required
+                  value="{{ request.POST.stockQuantity|default:'' }}"
+                  placeholder="0"
+                />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="image">Ảnh sản phẩm</label>
+                <input type="file" id="image" name="image" accept="image/*" />
+                <small>Ưu tiên ảnh ngang tỉ lệ 4:3 để hiển thị đẹp trên thẻ sản phẩm.</small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <a href="{% url 'product_list' %}" class="btn btn-secondary">Quay lại</a>
+              <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+            </div>
+          </form>
+        </section>
+      </div>
     </main>
   </body>
 </html>

@@ -1,72 +1,45 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
-}
-
-.delete-wrapper {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
+.delete-page {
+  padding: 36px 0 56px;
 }
 
 .delete-card {
-  background: white;
-  width: 100%;
-  max-width: 520px;
-  border-radius: 14px;
-  padding: 28px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .delete-card h1 {
-  margin-bottom: 14px;
-  color: #b42318;
+  margin: 0;
+  font-family: "Fraunces", "Times New Roman", serif;
+  color: var(--danger);
+  font-size: clamp(28px, 4vw, 38px);
 }
 
-.delete-card p {
-  margin-bottom: 12px;
-  color: #444;
+.delete-card .lead {
+  margin: 10px 0 0;
+  color: var(--muted);
 }
 
 .product-box {
-  background: #f9fafb;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 16px;
-  margin: 18px 0 22px;
+  margin-top: 18px;
+  border-radius: 14px;
+  border: 1px solid #f3d3d0;
+  background: #fff6f5;
+  padding: 14px;
+}
+
+.product-box p {
+  margin: 0;
+  color: #4a5568;
+}
+
+.product-box p + p {
+  margin-top: 8px;
 }
 
 .delete-actions {
+  margin-top: 18px;
   display: flex;
-  gap: 12px;
   justify-content: flex-end;
+  gap: 10px;
   flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-block;
-  padding: 12px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  background: #6c757d;
-  color: white;
-}
-
-.btn-danger {
-  background: #e63946;
-  color: white;
 }

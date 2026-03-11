@@ -3,103 +3,100 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Danh sách sản phẩm</title>
-
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/product_list.css' %}" />
   </head>
-
   <body>
-    <header class="header">
-      <div class="container nav">
-        <div class="logo">Sales Management</div>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <nav>
-          <a href="{% url 'home' %}">Trang chủ</a>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
 
-          {% if request.user.is_staff %}
-          <a href="{% url 'product_create' %}">Thêm sản phẩm</a>
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'product_list' %}" class="nav-link">Sản phẩm</a>
+          {% if request.user.is_authenticated %}
+            {% if request.user.is_staff %}
+          <a href="{% url 'product_create' %}" class="nav-link">Thêm sản phẩm</a>
+          <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+            {% else %}
+          <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}" class="nav-link">Lịch sử mua</a>
+          <a href="{% url 'wallet' %}" class="nav-link">Ví tiền</a>
+            {% endif %}
+          <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
           {% else %}
-          <a href="{% url 'cart' %}">Giỏ hàng</a>
-          <a href="{% url 'order_history' %}">Lịch sử mua</a>
+          <a href="{% url 'login' %}" class="nav-link">Đăng nhập</a>
+          <a href="{% url 'register' %}" class="nav-link">Đăng ký</a>
           {% endif %}
-
-          <a href="{% url 'logout' %}">Đăng xuất</a>
         </nav>
       </div>
     </header>
 
-    <section class="container">
-      <h1 class="page-title">Danh sách sản phẩm</h1>
+    <main class="product-list-page">
+      <div class="container">
+        <section class="page-card">
+          <div class="list-toolbar">
+            <h1>Danh sách sản phẩm</h1>
+          </div>
 
-      <form method="get" action="{% url 'product_list' %}" class="product-search-form">
-        <label for="product-list-search" class="sr-only">Tìm sản phẩm</label>
-        <input
-          id="product-list-search"
-          type="text"
-          name="q"
-          placeholder="Tìm theo tên, mô tả..."
-          value="{{ keyword }}"
-        />
-        <button type="submit">Tìm</button>
-      </form>
-
-      <div class="product-grid">
-        {% for product in products %}
-
-        <div class="product-card">
-          <div class="product-image">
-            {% if product.image %}
-            <img
-              src="{{ product.image.url }}"
-              alt="{{ product.productName }}"
+          <form method="get" action="{% url 'product_list' %}" class="product-search-form">
+            <label for="product-list-search" class="visually-hidden">Tìm sản phẩm</label>
+            <input
+              id="product-list-search"
+              type="text"
+              name="q"
+              placeholder="Tìm theo tên, mô tả..."
+              value="{{ keyword }}"
             />
-            {% else %}
-            <div class="no-image">No Image</div>
-            {% endif %}
+            <button type="submit" class="btn btn-secondary">Tìm</button>
+          </form>
+
+          <div class="product-grid">
+            {% for product in products %}
+            <article class="product-card">
+              <div class="product-image">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.productName }}" />
+                {% else %}
+                <div class="no-image">Chưa có ảnh</div>
+                {% endif %}
+              </div>
+
+              <div class="product-info">
+                <h3>{{ product.productName }}</h3>
+                <p class="desc">
+                  {% if product.description %}
+                  {{ product.description|truncatechars:80 }}
+                  {% else %}
+                  Không có mô tả.
+                  {% endif %}
+                </p>
+                <p class="price">{{ product.formatted_price }}</p>
+                <p class="stock">Tồn kho: {{ product.stockQuantity }}</p>
+
+                <div class="product-actions">
+                  <a href="{{ product.get_absolute_url }}" class="btn-detail">Xem chi tiết</a>
+                  {% if request.user.is_staff %}
+                  <a href="{% url 'product_update' product.id %}" class="btn-edit">Sửa</a>
+                  <a href="{% url 'product_delete' product.id %}" class="btn-delete">Xóa</a>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+            {% empty %}
+            <p class="empty-state">Chưa có sản phẩm nào.</p>
+            {% endfor %}
           </div>
-
-          <div class="product-info">
-            <h3>{{ product.productName }}</h3>
-
-            <p class="desc">
-              {% if product.description %}
-                {{ product.description|truncatechars:80 }}
-              {% else %}
-                Không có mô tả
-              {% endif %}
-            </p>
-
-            <p class="price">{{ product.formatted_price }}</p>
-
-            <p class="stock">Tồn kho: {{ product.stockQuantity }}</p>
-
-            <div class="product-actions">
-              <a href="{{ product.get_absolute_url }}" class="btn-detail">
-                Xem chi tiết
-              </a>
-
-              {% if request.user.is_staff %}
-              <a href="{% url 'product_update' product.id %}" class="btn-edit">
-                Sửa
-              </a>
-
-              <a
-                href="{% url 'product_delete' product.id %}"
-                class="btn-delete"
-              >
-                Xóa
-              </a>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-
-        {% empty %}
-
-        <p>Chưa có sản phẩm nào.</p>
-
-        {% endfor %}
+        </section>
       </div>
-    </section>
+    </main>
   </body>
 </html>

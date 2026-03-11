@@ -4,158 +4,225 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>{{ meta_title }}</title>
     <meta name="description" content="{{ meta_description }}" />
-    <meta
-      name="keywords"
-      content="quản lý bán hàng, sản phẩm, tìm kiếm sản phẩm, django, web bán hàng"
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700&display=swap"
+      rel="stylesheet"
     />
-    <meta name="robots" content="{{ robots_content }}" />
-    <link rel="canonical" href="{{ canonical_url }}" />
-
-    <meta property="og:locale" content="vi_VN" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="{{ meta_title }}" />
-    <meta property="og:description" content="{{ meta_description }}" />
-    <meta property="og:url" content="{{ canonical_url }}" />
-    <meta property="og:site_name" content="Sales Management" />
-
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="{{ meta_title }}" />
-    <meta name="twitter:description" content="{{ meta_description }}" />
-
     <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Sales Management",
-        "url": "{{ canonical_home_url|escapejs }}",
-        "inLanguage": "vi-VN",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "{{ canonical_home_url|escapejs }}?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
   </head>
   <body>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
+
     <header class="site-header">
       <div class="container nav-wrap">
-        <div class="logo">Sales Management</div>
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
 
         <nav class="main-nav">
-          {% if request.user.is_authenticated and not request.user.is_staff %}
-          <span class="user-greeting"
-            >Xin chào, {{ request.user.username }}</span
-          >
-          {% endif %}
-          <a href="{% url 'home' %}">Trang chủ</a>
-
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'product_list' %}" class="nav-link">Sản phẩm</a>
           {% if request.user.is_authenticated %}
-          <a href="{% url 'product_list' %}">Danh sách sản phẩm</a>
-
-          {% if request.user.is_staff %}
-          <a href="{% url 'product_create' %}">Thêm sản phẩm</a>
-          <a href="{% url 'topup_request_list' %}">Yêu cầu nạp tiền</a>
-          <a href="/admin/">Admin</a>
+            {% if request.user.is_staff %}
+          <a href="{% url 'product_create' %}" class="nav-link">Thêm sản phẩm</a>
+          <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+          <a href="/admin/" class="nav-link">Admin</a>
+            {% else %}
+          <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}" class="nav-link">Lịch sử mua</a>
+          <a href="{% url 'wallet' %}" class="nav-link">Ví tiền</a>
+          <a href="{% url 'topup_request_create' %}" class="nav-link">Nạp tiền</a>
+            {% endif %}
+          <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
           {% else %}
-          <a href="{% url 'cart' %}">Giỏ hàng</a>
-          <a href="{% url 'order_history' %}">Lịch sử mua</a>
-          <a href="{% url 'wallet' %}">Ví tiền</a>
-          <a href="{% url 'topup_request_create' %}">Nạp tiền</a>
-          {% endif %}
-
-          <a href="{% url 'logout' %}">Đăng xuất</a>
-          {% else %}
-          <a href="{% url 'login' %}">Đăng nhập</a>
-          <a href="{% url 'register' %}">Đăng ký</a>
+          <a href="{% url 'login' %}" class="nav-link">Đăng nhập</a>
+          <a href="{% url 'register' %}" class="nav-link">Đăng ký</a>
           {% endif %}
         </nav>
 
         <form method="get" action="{% url 'home' %}" class="header-search-form">
-          <label for="header-search-keyword" class="sr-only"
-            >Tìm kiếm sản phẩm</label
-          >
+          <label for="header-search" class="visually-hidden">Tìm kiếm sản phẩm</label>
           <input
-            id="header-search-keyword"
+            id="header-search"
             type="text"
             name="q"
             placeholder="Tìm sản phẩm..."
             value="{{ keyword }}"
           />
+          {% if selected_category %}
+          <input type="hidden" name="category" value="{{ selected_category }}" />
+          {% endif %}
           <button type="submit">Tìm</button>
         </form>
       </div>
     </header>
 
-    <section class="hero">
-      <div class="container">
-        <h1>Hệ thống quản lý bán hàng và tìm kiếm sản phẩm</h1>
-        <p>
-          Trang chủ hiển thị sản phẩm, hỗ trợ tìm kiếm nhanh và giúp người dùng
-          xem thông tin sản phẩm dễ dàng.
-        </p>
-      </div>
-    </section>
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Bảng điều khiển bán hàng</p>
+            <h1>Hiển thị sản phẩm đẹp hơn, quản lý danh mục rõ ràng hơn.</h1>
+            <p class="hero-text">
+              Theo dõi sản phẩm nổi bật, lọc theo danh mục và tìm kiếm chỉ trong một
+              màn hình.
+            </p>
+            <div class="hero-actions">
+              <a href="{% url 'product_list' %}" class="btn btn-primary">Xem tất cả sản phẩm</a>
+              {% if request.user.is_authenticated and request.user.is_staff %}
+              <a href="{% url 'product_create' %}" class="btn btn-ghost">Tạo sản phẩm mới</a>
+              {% endif %}
+            </div>
+          </div>
 
-    <section class="product-section">
-      <div class="container">
-        <h2>Sản phẩm mới nhất</h2>
+          <aside class="hero-filter">
+            <h2>Lọc nhanh danh mục</h2>
+            <p>Chọn một nhóm để hiển thị đúng mặt hàng bạn đang quan tâm.</p>
+            <div class="category-pills">
+              <a
+                href="{% url 'home' %}"
+                class="pill {% if not selected_category %}active{% endif %}"
+                >Tất cả</a
+              >
+              {% for value, label in categories %}
+              <a
+                href="{% url 'home' %}?category={{ value }}"
+                class="pill {% if selected_category == value %}active{% endif %}"
+                >{{ label }}</a
+              >
+              {% endfor %}
+            </div>
+          </aside>
+        </div>
+      </section>
 
-        {% if keyword %}
-        <p class="result-text">
-          Kết quả tìm kiếm cho từ khóa: <strong>{{ keyword }}</strong>
-        </p>
-        {% endif %}
+      <section class="highlight-section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Sản phẩm nổi bật</h2>
+            <p>Những sản phẩm mới hoặc đang được quan tâm nhiều nhất.</p>
+          </div>
 
-        <div class="product-grid">
-          {% for product in products %}
-          <article class="product-card">
-            <a href="{{ product.get_absolute_url }}" class="product-link">
-              <div class="product-image">
+          <div class="slider-grid">
+            {% for product in slider_products %}
+            <a href="{{ product.get_absolute_url }}" class="slide-card">
+              <div class="slide-image">
                 {% if product.image %}
-                <img
-                  src="{{ product.image.url }}"
-                  alt="{{ product.productName }}"
-                  loading="lazy"
-                />
+                <img src="{{ product.image.url }}" alt="{{ product.productName }}" />
                 {% else %}
                 <div class="no-image">Chưa có ảnh</div>
                 {% endif %}
               </div>
-
-              <div class="product-info">
+              <div class="slide-info">
+                <span class="chip">{{ product.get_category_display }}</span>
                 <h3>{{ product.productName }}</h3>
-
-                <p class="product-desc">
-                  {% if product.description %}
-                    {{ product.description|truncatechars:80 }}
-                  {% else %}
-                    Không có mô tả
-                  {% endif %}
-                </p>
-
-                <p class="price">{{ product.formatted_price }}</p>
-                <p class="stock">Tồn kho: {{ product.stockQuantity }}</p>
-
-                <span class="detail-btn">Xem chi tiết</span>
+                <p>{{ product.formatted_price }}</p>
               </div>
             </a>
-          </article>
-          {% empty %}
-          <div class="empty-box">
-            <p>Hiện chưa có sản phẩm nào.</p>
+            {% empty %}
+            <p class="empty-state">Chưa có sản phẩm nổi bật.</p>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
-      </div>
-    </section>
+      </section>
 
-    <footer class="site-footer">
-      <p>Sales Management System - Homepage chuẩn SEO bằng Django</p>
-    </footer>
+      <section class="main-content">
+        <div class="container layout-grid">
+          <aside class="sidebar">
+            <div class="aside-box">
+              <h3>Danh mục sản phẩm</h3>
+              <ul class="category-list">
+                <li>
+                  <a
+                    href="{% url 'home' %}"
+                    {% if not selected_category %}class="active"{% endif %}
+                    >Tất cả sản phẩm</a
+                  >
+                </li>
+                {% for value, label in categories %}
+                <li>
+                  <a
+                    href="{% url 'home' %}?category={{ value }}"
+                    {% if selected_category == value %}class="active"{% endif %}
+                    >{{ label }}</a
+                  >
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="aside-box">
+              <h3>Sản phẩm mới</h3>
+              <div class="aside-products">
+                {% for product in aside_products %}
+                <a href="{{ product.get_absolute_url }}" class="aside-product">
+                  {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="{{ product.productName }}" />
+                  {% else %}
+                  <div class="mini-no-image">No image</div>
+                  {% endif %}
+                  <div class="aside-copy">
+                    <p class="aside-name">{{ product.productName }}</p>
+                    <p class="aside-price">{{ product.formatted_price }}</p>
+                  </div>
+                </a>
+                {% empty %}
+                <p class="empty-state">Chưa có sản phẩm.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </aside>
+
+          <div class="content-area">
+            <div class="content-head">
+              <h2>Danh sách sản phẩm</h2>
+              {% if keyword %}
+              <p>Kết quả tìm kiếm cho: <strong>{{ keyword }}</strong></p>
+              {% else %}
+              <p>Hiển thị toàn bộ sản phẩm hiện có trong hệ thống.</p>
+              {% endif %}
+            </div>
+
+            <div class="product-grid">
+              {% for product in products %}
+              <article class="product-card">
+                <a href="{{ product.get_absolute_url }}" class="product-link">
+                  <div class="product-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.productName }}" />
+                    {% else %}
+                    <div class="no-image">Chưa có ảnh</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="product-info">
+                    <p class="product-category">{{ product.get_category_display }}</p>
+                    <h3>{{ product.productName }}</h3>
+                    <p class="product-desc">
+                      {% if product.description %}
+                      {{ product.description|truncatechars:90 }}
+                      {% else %}
+                      Không có mô tả.
+                      {% endif %}
+                    </p>
+                    <p class="price">{{ product.formatted_price }}</p>
+                    <p class="stock">Tồn kho: {{ product.stockQuantity }}</p>
+                  </div>
+                </a>
+              </article>
+              {% empty %}
+              <p class="empty-state">Hiện chưa có sản phẩm nào.</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   </body>
 </html>

@@ -1,44 +1,74 @@
 {% load static %}
 <!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
     <title>Đăng nhập - Quản lý bán hàng</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container">
-        <div class="logo">Sales Management System</div>
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <form method="post" action="{% url 'login' %}">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
+
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'login' %}" class="nav-link">Đăng nhập</a>
+          <a href="{% url 'register' %}" class="nav-link">Đăng ký</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="auth-shell">
+      <div class="container">
+        <section class="page-card auth-card">
+          <div class="auth-brand">
+            <h1 class="title">Đăng nhập</h1>
+            <p>Truy cập hệ thống quản lý bán hàng của bạn.</p>
+          </div>
+
+          <form method="post" action="{% url 'login' %}" class="auth-form">
             {% csrf_token %}
 
             {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
+            <ul class="messages-list">
+              {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+            </ul>
             {% endif %}
 
-            <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" name="username" required>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" id="username" name="username" required />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" required />
+              </div>
             </div>
 
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" name="password" required>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary auth-submit">Đăng nhập</button>
             </div>
+          </form>
 
-            <button type="submit">Đăng nhập</button>
-        </form>
-
-        <div class="links">
+          <div class="links">
             Chưa có tài khoản? <a href="{% url 'register' %}">Đăng ký</a>
-        </div>
-    </div>
-</body>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
 </html>

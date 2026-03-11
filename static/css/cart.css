@@ -1,82 +1,18 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.cart-page {
+  padding: 34px 0 56px;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
-  color: #222;
-}
-
-.container {
-  width: 94%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.cart-header {
-  background: #0d6efd;
-  color: white;
-  padding: 16px 0;
-  margin-bottom: 24px;
-}
-
-.header-wrap {
+.cart-summary {
+  margin-top: 16px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.nav a {
-  color: white;
-  text-decoration: none;
-  margin-left: 16px;
-  font-weight: 600;
-}
-
-.cart-page {
-  padding-bottom: 40px;
-}
-
-.cart-card {
-  background: white;
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
-}
-
-.cart-card h1 {
-  margin-bottom: 14px;
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  border-bottom: 1px solid #eee;
-  padding: 12px 10px;
-  text-align: left;
-  vertical-align: top;
-}
-
-th {
-  background: #f9fafb;
+.inline-form {
+  display: inline-block;
 }
 
 .qty-wrap {
@@ -87,67 +23,21 @@ th {
 
 .qty-wrap input {
   width: 88px;
-  padding: 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border: 1px solid #d6deea;
+  border-radius: 10px;
+  padding: 8px 8px;
 }
 
-.inline-form {
-  display: inline-block;
+.table-wrap table tbody tr:hover {
+  background: #fffbf4;
 }
 
-.checkout-box {
-  margin-top: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+.cart-empty {
+  margin-top: 6px;
 }
 
-.btn {
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: #0d6efd;
-}
-
-.btn-secondary {
-  background: #6c757d;
-}
-
-.btn-danger {
-  background: #dc3545;
-}
-
-.btn-muted {
-  background: #64748b;
-}
-
-.messages {
-  margin-bottom: 14px;
-}
-
-.message {
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.message.error {
-  background: #fdeaea;
-  color: #b42318;
-}
-
-.message.success {
-  background: #e7f6ec;
-  color: #157347;
+@media (max-width: 760px) {
+  .cart-summary {
+    align-items: stretch;
+  }
 }

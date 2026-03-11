@@ -26,6 +26,7 @@
     <meta name="twitter:image" content="{{ product_image_url }}" />
     {% endif %}
 
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/product_detail.css' %}" />
     <script type="application/ld+json">
       {
@@ -48,151 +49,141 @@
     </script>
   </head>
   <body>
-    <header class="detail-header">
-      <div class="container header-wrap">
-        <div class="logo">Sales Management</div>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <nav class="nav">
-          <a href="{% url 'home' %}">Trang chủ</a>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
+
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'product_list' %}" class="nav-link">Sản phẩm</a>
           {% if request.user.is_authenticated %}
-          <a href="{% url 'product_list' %}">Sản phẩm</a>
-          {% if not request.user.is_staff %}
-          <a href="{% url 'cart' %}">Giỏ hàng</a>
-          {% endif %}
-          <a href="{% url 'logout' %}">Đăng xuất</a>
+            {% if request.user.is_staff %}
+          <a href="{% url 'product_create' %}" class="nav-link">Thêm sản phẩm</a>
+          <a href="{% url 'topup_request_list' %}" class="nav-link">Yêu cầu nạp tiền</a>
+            {% else %}
+          <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
+          <a href="{% url 'order_history' %}" class="nav-link">Lịch sử mua</a>
+          <a href="{% url 'wallet' %}" class="nav-link">Ví tiền</a>
+            {% endif %}
+          <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
           {% else %}
-          <a href="{% url 'login' %}">Đăng nhập</a>
-          <a href="{% url 'register' %}">Đăng ký</a>
+          <a href="{% url 'login' %}" class="nav-link">Đăng nhập</a>
+          <a href="{% url 'register' %}" class="nav-link">Đăng ký</a>
           {% endif %}
         </nav>
       </div>
     </header>
 
-    <main class="container detail-page">
-      {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
-
-      <section class="detail-card">
-        <div class="detail-image">
-          {% if product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.productName }}" loading="lazy" />
-          {% else %}
-          <div class="no-image">Chưa có ảnh</div>
-          {% endif %}
-        </div>
-
-        <div class="detail-info">
-          <h1>{{ product.productName }}</h1>
-          <p class="detail-price">{{ product.formatted_price }}</p>
-          <p class="detail-stock">Tồn kho: {{ product.stockQuantity }}</p>
-
-          <div class="detail-description">
-            <h2>Mô tả sản phẩm</h2>
-            <p>
-              {% if product.description %}
-                {{ product.description }}
-              {% else %}
-                Không có mô tả
-              {% endif %}
-            </p>
-          </div>
-
-          <div class="detail-actions">
-            <a href="{% url 'home' %}" class="btn btn-secondary"
-              >Quay lại trang chủ</a
-            >
-
-            {% if request.user.is_staff %}
-            <a
-              href="{% url 'product_update' product.id %}"
-              class="btn btn-warning"
-              >Sửa</a
-            >
-            <a
-              href="{% url 'product_delete' product.id %}"
-              class="btn btn-danger"
-              >Xóa</a
-            >
-            {% elif request.user.is_authenticated %}
-            {% if product.stockQuantity > 0 %}
-            <form
-              method="post"
-              action="{% url 'cart_add' product.id %}"
-              class="inline-action-form"
-            >
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-              <label for="add-cart-qty" class="qty-label">SL</label>
-              <input
-                id="add-cart-qty"
-                class="qty-input"
-                type="number"
-                name="quantity"
-                min="1"
-                max="{{ product.stockQuantity }}"
-                value="1"
-                required
-              />
-              <button type="submit" class="btn btn-secondary">Thêm vào giỏ</button>
-            </form>
-
-            <form
-              method="post"
-              action="{% url 'buy_now' product.id %}"
-              class="inline-action-form"
-            >
-              {% csrf_token %}
-              <label for="buy-now-qty" class="qty-label">SL</label>
-              <input
-                id="buy-now-qty"
-                class="qty-input"
-                type="number"
-                name="quantity"
-                min="1"
-                max="{{ product.stockQuantity }}"
-                value="1"
-                required
-              />
-              <button type="submit" class="btn btn-primary">Mua ngay</button>
-            </form>
-            {% else %}
-            <span class="btn btn-disabled">Hết hàng</span>
-            {% endif %}
-            {% else %}
-            <a
-              href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}"
-              class="btn btn-primary"
-              >Mua ngay</a
-            >
-            {% endif %}
-          </div>
-        </div>
-      </section>
-
-      <section class="related-section">
-        <h2>Sản phẩm liên quan</h2>
-
-        <div class="related-grid">
-          {% for item in related_products %}
-          <a href="{{ item.get_absolute_url }}" class="related-card">
-            {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.productName }}" loading="lazy" />
-            {% else %}
-            <div class="small-no-image">No Image</div>
-            {% endif %}
-            <h3>{{ item.productName }}</h3>
-            <p>{{ item.formatted_price }}</p>
-          </a>
-          {% empty %}
-          <p>Chưa có sản phẩm liên quan.</p>
+    <main class="detail-page">
+      <div class="container">
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
           {% endfor %}
         </div>
-      </section>
+        {% endif %}
+
+        <section class="detail-card">
+          <div class="detail-image">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.productName }}" loading="lazy" />
+            {% else %}
+            <div class="no-image">Chưa có ảnh</div>
+            {% endif %}
+          </div>
+
+          <div class="detail-info">
+            <h1>{{ product.productName }}</h1>
+            <p class="detail-price">{{ product.formatted_price }}</p>
+            <p class="detail-stock">Tồn kho: {{ product.stockQuantity }}</p>
+
+            <div class="detail-description">
+              <h2>Mô tả sản phẩm</h2>
+              <p>
+                {% if product.description %}
+                {{ product.description }}
+                {% else %}
+                Không có mô tả.
+                {% endif %}
+              </p>
+            </div>
+
+            <div class="detail-actions">
+              <a href="{% url 'home' %}" class="btn btn-secondary">Quay lại trang chủ</a>
+
+              {% if request.user.is_staff %}
+              <a href="{% url 'product_update' product.id %}" class="btn btn-warning">Sửa</a>
+              <a href="{% url 'product_delete' product.id %}" class="btn btn-danger">Xóa</a>
+              {% elif request.user.is_authenticated %}
+                {% if product.stockQuantity > 0 %}
+                <form method="post" action="{% url 'cart_add' product.id %}" class="inline-action-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                  <label for="add-cart-qty" class="qty-label">SL</label>
+                  <input
+                    id="add-cart-qty"
+                    class="qty-input"
+                    type="number"
+                    name="quantity"
+                    min="1"
+                    max="{{ product.stockQuantity }}"
+                    value="1"
+                    required
+                  />
+                  <button type="submit" class="btn btn-outline">Thêm vào giỏ</button>
+                </form>
+
+                <form method="post" action="{% url 'buy_now' product.id %}" class="inline-action-form">
+                  {% csrf_token %}
+                  <label for="buy-now-qty" class="qty-label">SL</label>
+                  <input
+                    id="buy-now-qty"
+                    class="qty-input"
+                    type="number"
+                    name="quantity"
+                    min="1"
+                    max="{{ product.stockQuantity }}"
+                    value="1"
+                    required
+                  />
+                  <button type="submit" class="btn btn-primary">Mua ngay</button>
+                </form>
+                {% else %}
+                <span class="btn btn-disabled">Hết hàng</span>
+                {% endif %}
+              {% else %}
+              <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary">Mua ngay</a>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        <section class="related-section">
+          <h2>Sản phẩm liên quan</h2>
+          <div class="related-grid">
+            {% for item in related_products %}
+            <a href="{{ item.get_absolute_url }}" class="related-card">
+              {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.productName }}" loading="lazy" />
+              {% else %}
+              <div class="small-no-image">No Image</div>
+              {% endif %}
+              <h3>{{ item.productName }}</h3>
+              <p>{{ item.formatted_price }}</p>
+            </a>
+            {% empty %}
+            <p class="empty-state">Chưa có sản phẩm liên quan.</p>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
     </main>
   </body>
 </html>

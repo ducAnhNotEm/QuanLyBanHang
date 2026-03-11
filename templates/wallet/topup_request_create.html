@@ -5,67 +5,80 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Yêu cầu nạp tiền</title>
+    <link rel="stylesheet" href="{% static 'css/page_theme.css' %}" />
     <link rel="stylesheet" href="{% static 'css/topup_request.css' %}" />
   </head>
   <body>
-    <header class="topup-header">
-      <div class="container header-wrap">
-        <div class="logo">Sales Management</div>
+    <div class="page-glow page-glow-left" aria-hidden="true"></div>
+    <div class="page-glow page-glow-right" aria-hidden="true"></div>
 
-        <nav class="nav">
-          <a href="{% url 'home' %}">Trang chủ</a>
-          <a href="{% url 'wallet' %}">Ví tiền</a>
-          <a href="{% url 'logout' %}">Đăng xuất</a>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="logo" aria-label="Sales Management Home">
+          <span class="logo-mark">SM</span>
+          <span class="logo-text">Sales Management</span>
+        </a>
+
+        <nav class="main-nav">
+          <a href="{% url 'home' %}" class="nav-link">Trang chủ</a>
+          <a href="{% url 'product_list' %}" class="nav-link">Sản phẩm</a>
+          <a href="{% url 'wallet' %}" class="nav-link">Ví tiền</a>
+          <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
         </nav>
       </div>
     </header>
 
-    <main class="container topup-page">
-      <section class="topup-card">
-        <h1>Gửi yêu cầu nạp tiền</h1>
-        <p>Nhập số tiền bạn muốn nạp và ghi chú nếu cần.</p>
-
-        {% if messages %}
-        <div class="messages">
-          {% for message in messages %}
-          <div class="message {{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        <form method="post" class="topup-form">
-          {% csrf_token %}
-
-          <div class="form-group">
-            <label for="amount">Số tiền nạp</label>
-            <input
-              type="text"
-              id="amount"
-              name="amount"
-              inputmode="numeric"
-              placeholder="Ví dụ: 50.000"
-              required
-            />
+    <main class="topup-page">
+      <div class="container">
+        <section class="page-card topup-card">
+          <div class="page-head">
+            <h1>Gửi yêu cầu nạp tiền</h1>
+            <p class="lead">Nhập số tiền bạn muốn nạp và ghi chú (nếu cần).</p>
           </div>
 
-          <div class="form-group">
-            <label for="note">Ghi chú</label>
-            <textarea
-              id="note"
-              name="note"
-              rows="5"
-              placeholder="Ví dụ: Chuyển khoản lúc 8h sáng"
-            ></textarea>
+          {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
           </div>
+          {% endif %}
 
-          <div class="form-actions">
-            <a href="{% url 'wallet' %}" class="btn btn-secondary"
-              >Quay lại ví</a
-            >
-            <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
-          </div>
-        </form>
-      </section>
+          <form method="post" class="topup-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="amount">Số tiền nạp *</label>
+                <input
+                  type="text"
+                  id="amount"
+                  name="amount"
+                  inputmode="numeric"
+                  placeholder="Ví dụ: 50.000"
+                  value="{{ request.POST.amount|default:'' }}"
+                  required
+                />
+              </div>
+
+              <div class="form-group full-width">
+                <label for="note">Ghi chú</label>
+                <textarea
+                  id="note"
+                  name="note"
+                  rows="5"
+                  placeholder="Ví dụ: Chuyển khoản lúc 8h sáng"
+                >{{ request.POST.note|default:'' }}</textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <a href="{% url 'wallet' %}" class="btn btn-secondary">Quay lại ví</a>
+              <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
+            </div>
+          </form>
+        </section>
+      </div>
     </main>
   </body>
 </html>

@@ -10,20 +10,45 @@ def product_image_upload_path(instance, filename):
 
 
 class Product(models.Model):
+    CATEGORY_CHOICES = [
+        ('banh-keo', 'Bánh kẹo'),
+        ('nuoc-uong', 'Nước uống'),
+        ('thuc-pham', 'Thực phẩm'),
+        ('do-kho', 'Đồ khô'),
+        ('do-hop', 'Đồ hộp'),
+        ('quan-ao', 'Quần áo'),
+        ('giay-dep', 'Giày dép'),
+        ('phu-kien', 'Phụ kiện'),
+        ('do-gia-dung', 'Đồ gia dụng'),
+        ('my-pham', 'Mỹ phẩm'),
+        ('do-dien-tu', 'Đồ điện tử'),
+    ]
+
     productName = models.CharField(max_length=200)
+    category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        default='thuc-pham'
+    )
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     stockQuantity = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to=product_image_upload_path, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.productName
 
     def _generate_unique_slug(self):
         base_slug = slugify(self.productName) or 'product'
         slug = base_slug
         counter = 1
+
         while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
             slug = f'{base_slug}-{counter}'
             counter += 1
+
         return slug
 
     def save(self, *args, **kwargs):
@@ -32,10 +57,6 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        # Backfill slug for legacy rows created before slug logic was fixed.
-        if not self.slug and self.pk:
-            self.slug = self._generate_unique_slug()
-            Product.objects.filter(pk=self.pk).update(slug=self.slug)
         return reverse('product_detail', kwargs={'slug': self.slug})
 
     @property
@@ -45,6 +66,3 @@ class Product(models.Model):
         except (TypeError, ValueError, InvalidOperation):
             return ''
         return f"{amount:,}".replace(',', '.') + " VND"
-
-    def __str__(self):
-        return self.productName
