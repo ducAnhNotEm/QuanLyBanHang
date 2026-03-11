@@ -1,56 +1,60 @@
 @startuml
-title Sales Management - Activity Diagram (Top Up Request)
+title Sales Management - Activity Diagram (Top Up Request + Admin Review)
 
 start
-:Khach hang vao trang "Yeu cau nap tien";
+:Customer mo trang top up request;
 
 if (Da dang nhap?) then (No)
-  :Redirect den trang Login;
+  :Redirect login;
   stop
 endif
 
-if (La admin/staff?) then (Yes)
-  :Redirect ve Home;
+if (La staff/admin?) then (Yes)
+  :Redirect home;
   stop
 endif
 
-:Nhap so tien va ghi chu;
+:Nhap amount va note;
 :Submit form;
 
-if (So tien hop le?) then (No)
-  :Hien thi loi "So tien khong hop le";
+if (Format amount hop le?) then (No)
+  :Hien thi loi so tien khong hop le;
   stop
 endif
 
-if (So tien > 0?) then (No)
-  :Hien thi loi "So tien nap phai lon hon 0";
+if (Amount > 0?) then (No)
+  :Hien thi loi amount phai > 0;
   stop
 endif
 
 if (Ton tai customer_profile?) then (No)
-  :Thong bao loi;\nRedirect Home;
+  :Thong bao loi, redirect home;
   stop
 endif
 
-:Tao TopUpRequest(status = PENDING);
+:Tao TopUpRequest(status=PENDING);
 :Thong bao gui yeu cau thanh cong;
-:Redirect Wallet;
+:Redirect wallet;
 
-:Admin vao danh sach yeu cau;
-if (Chon Duyet?) then (Yes)
-  if (Status = PENDING?) then (No)
+:Admin vao danh sach top up request;
+
+if (Admin chon Approve?) then (Yes)
+  :Lay request theo id;
+  if (Status != PENDING?) then (Yes)
     :Thong bao da xu ly truoc do;
-  else (Yes)
-    :Cong tien vao Wallet.balance;
-    :Cap nhat status = APPROVED;
+  else (No)
+    :wallet.balance += amount;
+    :TopUpRequest.status = APPROVED;
+    :Thong bao duyet thanh cong;
   endif
 else (Reject)
-  if (Status = PENDING?) then (No)
+  :Lay request theo id;
+  if (Status != PENDING?) then (Yes)
     :Thong bao da xu ly truoc do;
-  else (Yes)
-    :Cap nhat status = REJECTED;
+  else (No)
+    :TopUpRequest.status = REJECTED;
+    :Thong bao tu choi thanh cong;
   endif
 endif
-
 stop
 @enduml

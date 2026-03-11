@@ -31,16 +31,27 @@
 
     <main class="manage-page">
       <div class="container manage-card">
-        <section class="page-card">
-          <div class="manage-head page-head">
-            <h1>Tạo sản phẩm mới</h1>
-            <p>Điền thông tin chi tiết để sản phẩm hiển thị rõ ràng trong hệ thống.</p>
+        <section class="page-card create-card">
+          <div class="create-hero">
+            <div class="create-hero-copy">
+              <p class="hero-kicker">Quản trị sản phẩm</p>
+              <h1>Tạo sản phẩm mới</h1>
+              <p>Điền thông tin chi tiết để sản phẩm hiển thị rõ ràng và dễ tìm kiếm trong hệ thống.</p>
+            </div>
+            <div class="create-hero-note">
+              <h2>Checklist nhanh</h2>
+              <p>Trường bắt buộc: tên, phân loại, giá bán, tồn kho.</p>
+              <p>Ảnh tỉ lệ ngang sẽ hiển thị đẹp hơn ở danh sách.</p>
+            </div>
           </div>
 
-          <div class="form-card-header">
-            <h2>Thông tin sản phẩm</h2>
-            <p>Trường có dấu * là bắt buộc.</p>
+          {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
           </div>
+          {% endif %}
 
           {% if error %}
           <p class="alert alert-error">{{ error }}</p>
@@ -49,91 +60,120 @@
           <form method="post" enctype="multipart/form-data" class="product-form">
             {% csrf_token %}
 
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="productName">Tên sản phẩm *</label>
-                <input
-                  type="text"
-                  id="productName"
-                  name="productName"
-                  required
-                  value="{{ request.POST.productName|default:'' }}"
-                  placeholder="Ví dụ: Trà xanh đóng chai 500ml"
-                />
+            <section class="form-section">
+              <div class="section-head">
+                <h2>Thông tin cơ bản</h2>
+                <p>Những thông tin khách hàng nhìn thấy đầu tiên.</p>
               </div>
 
-              <div class="form-group">
-                <label for="category">Phân loại *</label>
-                <select id="category" name="category" required>
-                  <option value="">-- Chọn phân loại --</option>
-                  {% for value, label in categories %}
-                  <option
-                    value="{{ value }}"
-                    {% if request.POST.category == value %}selected{% endif %}
-                  >
-                    {{ label }}
-                  </option>
-                  {% endfor %}
-                </select>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="productName">Tên sản phẩm <span class="required-mark">*</span></label>
+                  <input
+                    type="text"
+                    id="productName"
+                    name="productName"
+                    required
+                    value="{{ request.POST.productName|default:'' }}"
+                    placeholder="Ví dụ: Trà xanh đóng chai 500ml"
+                  />
+                  <small class="field-hint">Nên để dưới 120 ký tự để hiển thị tốt trên thẻ sản phẩm.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="category">Phân loại <span class="required-mark">*</span></label>
+                  <select id="category" name="category" required>
+                    <option value="">-- Chọn phân loại --</option>
+                    {% for value, label in categories %}
+                    <option
+                      value="{{ value }}"
+                      {% if request.POST.category == value %}selected{% endif %}
+                    >
+                      {{ label }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <small class="field-hint">Chọn đúng nhóm để khách lọc sản phẩm chính xác.</small>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="description">Mô tả</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    placeholder="Mô tả ngắn về công dụng, điểm nổi bật hoặc thông tin vận chuyển..."
+                  >{{ request.POST.description|default:'' }}</textarea>
+                  <small class="field-hint">Có thể để trống, nhưng nên thêm mô tả để tăng tỉ lệ mua.</small>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section">
+              <div class="section-head">
+                <h2>Giá và tồn kho</h2>
+                <p>Thiết lập mức giá bán, giảm giá và số lượng tồn.</p>
               </div>
 
-              <div class="form-group full-width">
-                <label for="description">Mô tả</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows="5"
-                  placeholder="Mô tả ngắn về công dụng, điểm nổi bật hoặc thông tin vận chuyển..."
-                >{{ request.POST.description|default:'' }}</textarea>
+              <div class="form-grid stock-grid">
+                <div class="form-group">
+                  <label for="price">Giá bán (VND) <span class="required-mark">*</span></label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    id="price"
+                    name="price"
+                    required
+                    value="{{ request.POST.price|default:'' }}"
+                    placeholder="0.00"
+                  />
+                  <small class="field-hint">Nhập giá gốc trước giảm giá.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="discountPercent">Giảm giá (%)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    id="discountPercent"
+                    name="discountPercent"
+                    value="{{ request.POST.discountPercent|default:'0' }}"
+                    placeholder="0"
+                  />
+                  <small class="field-hint">Giá trị hợp lệ từ 0 đến 100.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="stockQuantity">Số lượng tồn <span class="required-mark">*</span></label>
+                  <input
+                    type="number"
+                    min="0"
+                    id="stockQuantity"
+                    name="stockQuantity"
+                    required
+                    value="{{ request.POST.stockQuantity|default:'' }}"
+                    placeholder="0"
+                  />
+                  <small class="field-hint">Có thể nhập 0 nếu chưa sẵn hàng.</small>
+                </div>
+              </div>
+            </section>
+
+            <section class="form-section">
+              <div class="section-head">
+                <h2>Hình ảnh sản phẩm</h2>
+                <p>Có thể thêm ảnh ngay hoặc cập nhật sau.</p>
               </div>
 
-              <div class="form-group">
-                <label for="price">Giá bán (VND) *</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  id="price"
-                  name="price"
-                  required
-                  value="{{ request.POST.price|default:'' }}"
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="discountPercent">Discount (%)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  id="discountPercent"
-                  name="discountPercent"
-                  value="{{ request.POST.discountPercent|default:'0' }}"
-                  placeholder="0"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="stockQuantity">Số lượng tồn *</label>
-                <input
-                  type="number"
-                  min="0"
-                  id="stockQuantity"
-                  name="stockQuantity"
-                  required
-                  value="{{ request.POST.stockQuantity|default:'' }}"
-                  placeholder="0"
-                />
-              </div>
-
-              <div class="form-group full-width">
+              <div class="upload-panel">
                 <label for="image">Ảnh sản phẩm</label>
                 <input type="file" id="image" name="image" accept="image/*" />
-                <small>Ưu tiên ảnh ngang tỉ lệ 4:3 để hiển thị đẹp trên thẻ sản phẩm.</small>
+                <small class="field-hint">Ưu tiên ảnh ngang tỉ lệ 4:3 để hiển thị đẹp trên thẻ sản phẩm.</small>
               </div>
-            </div>
+            </section>
 
             <div class="form-actions">
               <a href="{% url 'product_list' %}" class="btn btn-secondary">Quay lại</a>

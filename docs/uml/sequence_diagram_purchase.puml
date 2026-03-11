@@ -1,55 +1,66 @@
 @startuml
-title Sales Management - Sequence Diagram (Cart Checkout)
+title Sales Management - Sequence Diagram (Add Cart + Cart Checkout)
 
 actor Customer
-participant "ProductDetailView\n(template)" as ProductDetail
 participant "AddToCartView" as AddCart
-participant "CartView" as CartView
 participant "CartCheckoutView" as Checkout
-database "Cart / CartItem" as CartDB
 database "Product" as ProductDB
+database "Cart / CartItem" as CartDB
+database "DiscountCode" as DiscountDB
 database "Wallet" as WalletDB
 database "Order / OrderDetail" as OrderDB
 
-Customer -> ProductDetail: Mo trang chi tiet san pham
-ProductDetail --> Customer: Hien thi "Them vao gio" + "Mua ngay"
-
-Customer -> AddCart: POST /cart/add/{product_id} (quantity)
-AddCart -> ProductDB: Kiem tra ton kho
-alt So luong khong hop le
+== Add product to cart ==
+Customer -> AddCart: POST /cart/add/{product_id}\n(quantity, next)
+AddCart -> ProductDB: get product + check stock
+alt Quantity/stock invalid
   AddCart --> Customer: Redirect + error message
-else Hop le
-  AddCart -> CartDB: get_or_create(cart)\nget_or_create(cart_item)
-  AddCart -> CartDB: Cap nhat quantity, isSelected=True
-  AddCart --> Customer: Redirect + success message
+else Valid
+  AddCart -> CartDB: get_or_create(cart by customer)
+  AddCart -> CartDB: get_or_create(cart_item by cart+product)
+  AddCart -> CartDB: update quantity, isSelected=true
+  AddCart --> Customer: Redirect (next/cart) + success message
 end
 
-Customer -> CartView: GET /cart/
-CartView -> CartDB: Lay danh sach item
-CartView --> Customer: Hien thi item + tong tien item da chon
+== Checkout selected cart items ==
+Customer -> Checkout: POST /cart/checkout/\n(discount_code optional)
+Checkout -> CartDB: get selected CartItem list
+alt No selected item
+  Checkout --> Customer: Redirect /cart + error
+else Has selected items
+  Checkout -> ProductDB: select_for_update(products in cart)
+  alt Any item out of stock
+    Checkout --> Customer: Redirect /cart + error
+  else Stock is enough
+    Checkout -> Checkout: calculate subtotal/discount/final_total
 
-Customer -> Checkout: POST /cart/checkout/
-Checkout -> CartDB: Lay item isSelected=True
-alt Khong co item nao duoc chon
-  Checkout --> Customer: Redirect /cart + error message
-else Co item duoc chon
-  Checkout -> ProductDB: select_for_update() + kiem tra ton kho
-  alt Thieu ton kho
-    Checkout --> Customer: Redirect /cart + error message
-  else Du ton kho
-    Checkout -> WalletDB: select_for_update() + kiem tra so du
-    alt So du khong du
-      Checkout --> Customer: Redirect /cart + error message
-    else So du du
-    Checkout -> OrderDB: Tao Order
-    loop Tung item da chon
-      Checkout -> OrderDB: Tao OrderDetail
-      Checkout -> ProductDB: Tru stockQuantity
+    opt discount_code provided
+      Checkout -> DiscountDB: select_for_update(code)
+      alt Invalid/inactive/expired/over-usage
+        Checkout --> Customer: Redirect /cart + error
+      end
     end
-    Checkout -> OrderDB: Cap nhat totalAmount
-    Checkout -> WalletDB: Tru so du vi
-    Checkout -> CartDB: Xoa item da thanh toan
-    Checkout --> Customer: Redirect /orders/{id}/ + success message
+
+    Checkout -> Checkout: to_vnd_integer(final_total)
+    alt Not integer VND
+      Checkout --> Customer: Redirect /cart + error
+    else Integer amount
+      Checkout -> WalletDB: select_for_update(customer wallet)
+      alt Wallet missing or balance not enough
+        Checkout --> Customer: Redirect + error
+      else Wallet is valid
+        Checkout -> OrderDB: create Order(status=PAID, totals, coupon fields)
+        loop each selected item
+          Checkout -> OrderDB: create OrderDetail
+          Checkout -> ProductDB: stockQuantity -= item.quantity
+        end
+        opt discount_code valid
+          Checkout -> DiscountDB: usedCount += 1
+        end
+        Checkout -> WalletDB: balance -= final_total_vnd
+        Checkout -> CartDB: delete paid selected items
+        Checkout --> Customer: Redirect /orders/{id}/ + success
+      end
     end
   end
 end

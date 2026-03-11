@@ -24,7 +24,7 @@
           <a href="{% url 'product_list' %}" class="nav-link">Sản phẩm</a>
           <a href="{% url 'cart' %}" class="nav-link">Giỏ hàng</a>
           <a href="{% url 'order_history' %}" class="nav-link">Lịch sử mua</a>
-          <a href="{% url 'wallet' %}" class="nav-link">Ví tiền</a>
+          <a href="{% url 'wallet' %}" class="nav-link">Ví: {{ wallet_balance|vnd }} VNĐ</a>
           <a href="{% url 'logout' %}" class="nav-link">Đăng xuất</a>
         </nav>
       </div>

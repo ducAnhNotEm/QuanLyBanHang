@@ -31,6 +31,29 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'change-this-in-production')
 DEBUG = _env_bool('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') if host.strip()]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+
+if DEBUG:
+    if not ALLOWED_HOSTS:
+        ALLOWED_HOSTS = [
+            '127.0.0.1',
+            'localhost',
+            '.ngrok-free.app',
+            '.ngrok-free.dev',
+            '.ngrok.app',
+            '.ngrok.dev',
+        ]
+    if not CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS = [
+            'https://*.ngrok-free.app',
+            'https://*.ngrok-free.dev',
+            'https://*.ngrok.app',
+            'https://*.ngrok.dev',
+        ]
 
 
 # Application definition

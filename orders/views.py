@@ -171,6 +171,10 @@ class CartView(CustomerRequiredMixin, View):
 
     def get(self, request):
         cart, _ = Cart.objects.get_or_create(customer=request.customer_profile)
+        try:
+            wallet_balance = request.customer_profile.wallet.balance
+        except Wallet.DoesNotExist:
+            wallet_balance = 0
         items = list(cart.items.select_related('product').order_by('-id'))
         selected_subtotal = Decimal('0')
         selected_discount = Decimal('0')
@@ -189,6 +193,7 @@ class CartView(CustomerRequiredMixin, View):
         return render(request, self.template_name, {
             'cart': cart,
             'items': items,
+            'wallet_balance': wallet_balance,
             'selected_subtotal': selected_subtotal,
             'selected_discount': selected_discount,
             'selected_total': selected_total,
@@ -483,11 +488,16 @@ class OrderDetailView(CustomerRequiredMixin, View):
             id=id,
             customer=request.customer_profile,
         )
+        try:
+            wallet_balance = request.customer_profile.wallet.balance
+        except Wallet.DoesNotExist:
+            wallet_balance = 0
         product_discount_amount = order.discountAmount - order.couponDiscountAmount
         if product_discount_amount < 0:
             product_discount_amount = Decimal('0')
         return render(request, self.template_name, {
             'order': order,
+            'wallet_balance': wallet_balance,
             'product_discount_amount': product_discount_amount,
         })
 

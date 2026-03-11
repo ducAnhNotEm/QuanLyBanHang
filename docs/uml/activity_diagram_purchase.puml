@@ -1,75 +1,119 @@
 @startuml
-title Sales Management - Activity Diagram (Add Cart, Buy Now, Checkout Cart)
+title Sales Management - Activity Diagram (Add Cart, Buy Now, Cart Checkout)
 
 start
-:Nguoi dung mo chi tiet san pham;
+:Customer thao tac mua hang;
 
 if (Da dang nhap?) then (No)
-  :Nhan "Mua ngay";
-  :Redirect Login;
+  :Redirect login;
   stop
 endif
 
 if (La staff/admin?) then (Yes)
-  :Khong duoc mua hang;
+  :Bao loi, khong duoc mua hang;
   stop
 endif
 
-if (Con ton kho?) then (No)
-  :Thong bao het hang;
+if (Ton tai customer_profile?) then (No)
+  :Bao loi va redirect home;
   stop
 endif
 
-if (Chon "Them vao gio"?) then (Yes)
-  :Nhap so luong;
-  if (So luong hop le va <= ton kho?) then (No)
+if (Chon Them vao gio?) then (Yes)
+  :Nhap quantity;
+  if (Quantity hop le?) then (No)
+    :Bao loi quantity;
+    stop
+  endif
+  if (San pham con hang va du ton kho?) then (No)
+    :Bao loi ton kho;
+    stop
+  endif
+  :get_or_create Cart va CartItem;
+  if (Tong quantity trong gio > ton kho?) then (Yes)
+    :Bao loi vuot ton kho;
+    stop
+  endif
+  :Luu CartItem (isSelected=true);
+  :Thong bao thanh cong;
+  stop
+endif
+
+if (Chon Mua ngay?) then (Yes)
+  :Kiem tra quantity + ton kho;
+  if (Du lieu khong hop le?) then (Yes)
     :Bao loi;
     stop
   endif
-  :Tao/cap nhat CartItem;
-  :Redirect trang truoc hoac Gio hang;
-else (Mua ngay)
-  :Nhap so luong;
-  if (So luong hop le va <= ton kho?) then (No)
-    :Bao loi;
+
+  :Neu co discount_code, validate\n(isActive/time/usageLimit);
+  if (Discount code khong hop le?) then (Yes)
+    :Bao loi ma giam gia;
     stop
   endif
-  :Tinh tong tien;
-  if (So du vi >= tong tien?) then (No)
-    :Bao loi "So du vi khong du";
+
+  :Tinh subtotal, discount, total;
+  :Chuyen total sang so nguyen VND;
+  if (Khong quy doi duoc VND integer?) then (Yes)
+    :Bao loi gia tri thanh toan;
     stop
   endif
+
+  :Khoa Wallet (select_for_update);
+  if (Khong tim thay wallet hoac so du khong du?) then (Yes)
+    :Bao loi thanh toan;
+    stop
+  endif
+
+  :Khoa Product, tru stock;
   :Tao Order + OrderDetail;
-  :Tru ton kho san pham;
-  :Tru tien trong vi;
-  :Hien thi chi tiet don hang;
+  :Tru wallet.balance;
+  if (Co discount_code?) then (Yes)
+    :discount_code.usedCount += 1;
+  endif
+  :Redirect Order Detail + success;
+  stop
+else (Checkout gio hang)
+  :Lay cac CartItem isSelected=true;
+  if (Khong co item duoc chon?) then (Yes)
+    :Bao loi;
+    stop
+  endif
+
+  :Khoa Product list (select_for_update);
+  if (Co item khong du ton kho?) then (Yes)
+    :Bao loi ton kho;
+    stop
+  endif
+
+  :Tinh subtotal, discount, total cho tat ca item;
+  :Neu co discount_code, validate;
+  if (Discount code khong hop le?) then (Yes)
+    :Bao loi ma giam gia;
+    stop
+  endif
+
+  :Tinh coupon discount va final total;
+  :Chuyen final total sang so nguyen VND;
+  if (Khong quy doi duoc VND integer?) then (Yes)
+    :Bao loi gia tri thanh toan;
+    stop
+  endif
+
+  :Khoa Wallet (select_for_update);
+  if (Khong tim thay wallet hoac so du khong du?) then (Yes)
+    :Bao loi thanh toan;
+    stop
+  endif
+
+  :Tao Order;
+  :Loop tung item da chon -> Tao OrderDetail + tru stock;
+  :Tru wallet.balance;
+  if (Co discount_code?) then (Yes)
+    :discount_code.usedCount += 1;
+  endif
+  :Xoa selected CartItem da thanh toan;
+  :Redirect Order Detail + success;
   stop
 endif
-
-:Vao gio hang;
-:Chon/Bỏ chon san pham trong gio;
-:Cap nhat so luong neu can;
-
-if (Co it nhat 1 san pham duoc chon?) then (No)
-  :Bao loi;
-  stop
-endif
-
-if (Tat ca du ton kho?) then (No)
-  :Bao loi ton kho;
-  stop
-endif
-
-:Tinh tong tien item da chon;
-if (So du vi >= tong tien?) then (No)
-  :Bao loi "So du vi khong du";
-  stop
-endif
-
-:Tao Order + OrderDetail tu cac item duoc chon;
-:Tru ton kho tung san pham;
-:Tru tien trong vi;
-:Xoa item da thanh toan khoi gio;
-:Hien thi chi tiet don hang;
-stop
 @enduml
